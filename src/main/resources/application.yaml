@@ -1,0 +1,54 @@
+server:
+  port: ${SERVER_PORT:8080}
+spring:
+  application:
+    name: api-clean-arch
+  datasource:
+    url: ${DB_HOST:jdbc:postgresql://localhost:5432/restaurant-manager}
+    username: ${DB_USERNAME:restaurant-manager}
+    password: ${DB_PASSWORD:restaurant-manager-pwd}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 20000
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: ${JPA_SHOW_SQL:false}
+    properties:
+      hibernate:
+        format_sql: true
+        default_schema: restaurant-manager
+    open-in-view: false
+  flyway:
+    enabled: true
+    default-schema: restaurant-manager
+    schemas: restaurant-manager
+    locations: classpath:db/migration
+    baseline-on-migrate: false
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    groups:
+      enabled: true
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+    enabled: true
+  show-actuator: false
+  enable-native-support: true
+  use-management-port: false
+  cache:
+    disabled: false
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+
