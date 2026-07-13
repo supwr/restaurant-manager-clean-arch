@@ -6,9 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-/**
- * Domain model for Restaurant.
- */
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor

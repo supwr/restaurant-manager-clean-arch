@@ -8,22 +8,17 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
-/**
- * Domain model for MenuItem.
- */
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class MenuItem {
+public record MenuItem (
+        private Long id;
+        private Long restaurantId;
+        private String name;
+        private String description;
+        private BigDecimal price;
+        private Boolean localOnly;
+        private String photoPath;
+) {
 
-    private Long id;
-    private Long restaurantId;
-    private String name;
-    private String description;
-    private BigDecimal price;
-    private Boolean localOnly;
-    private String photoPath;
+
 
     public void validate() {
         if (restaurantId == null) {

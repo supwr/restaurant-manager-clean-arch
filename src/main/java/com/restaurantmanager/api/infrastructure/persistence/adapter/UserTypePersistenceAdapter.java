@@ -1,6 +1,6 @@
 package com.restaurantmanager.api.infrastructure.persistence.adapter;
 
-import com.restaurantmanager.api.application.port.UserTypePersistencePort;
+import com.restaurantmanager.api.application.gateway.UserTypeGateway;
 import com.restaurantmanager.api.domain.model.UserType;
 import com.restaurantmanager.api.infrastructure.persistence.entity.UserTypeEntity;
 import com.restaurantmanager.api.infrastructure.persistence.mapper.UserTypePersistenceMapper;
@@ -18,7 +18,7 @@ import java.util.Optional;
  */
 @Component
 @RequiredArgsConstructor
-public class UserTypePersistenceAdapter implements UserTypePersistencePort {
+public class UserTypePersistenceAdapter implements UserTypeGateway {
 
     private final UserTypeRepository repository;
     private final UserTypePersistenceMapper mapper;

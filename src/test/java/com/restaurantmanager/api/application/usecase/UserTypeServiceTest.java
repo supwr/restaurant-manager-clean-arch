@@ -1,9 +1,10 @@
 package com.restaurantmanager.api.application.usecase;
 
+import com.restaurantmanager.api.application.usecase.usertype.UserTypeService;
 import com.restaurantmanager.api.domain.exception.EntityNotFoundException;
 import com.restaurantmanager.api.domain.exception.ValidationException;
 import com.restaurantmanager.api.domain.model.UserType;
-import com.restaurantmanager.api.application.port.UserTypePersistencePort;
+import com.restaurantmanager.api.application.gateway.UserTypeGateway;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,7 +24,7 @@ import static org.mockito.Mockito.*;
 class UserTypeServiceTest {
 
     @Mock
-    private UserTypePersistencePort persistencePort;
+    private UserTypeGateway persistencePort;
 
     @InjectMocks
     private UserTypeService userTypeService;

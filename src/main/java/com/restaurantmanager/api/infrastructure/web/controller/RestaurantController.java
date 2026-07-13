@@ -1,6 +1,6 @@
 package com.restaurantmanager.api.infrastructure.web.controller;
 
-import com.restaurantmanager.api.application.usecase.RestaurantService;
+import com.restaurantmanager.api.application.usecase.restaurant.RestaurantService;
 import com.restaurantmanager.api.infrastructure.web.dto.RestaurantDTO;
 import com.restaurantmanager.api.infrastructure.web.mapper.RestaurantWebMapper;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,9 +18,6 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/restaurants")
-@RequiredArgsConstructor
-@Tag(name = "Restaurants", description = "Restaurant management API")
 public class RestaurantController {
 
     private static final Logger logger = LoggerFactory.getLogger(RestaurantController.class);

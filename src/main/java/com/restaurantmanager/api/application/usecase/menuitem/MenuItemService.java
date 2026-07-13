@@ -1,25 +1,22 @@
-package com.restaurantmanager.api.application.usecase;
+package com.restaurantmanager.api.application.usecase.menuitem;
 
-import com.restaurantmanager.api.application.port.MenuItemPersistencePort;
-import com.restaurantmanager.api.application.port.RestaurantPersistencePort;
+import com.restaurantmanager.api.application.gateway.MenuItemGateway;
+import com.restaurantmanager.api.application.gateway.RestaurantGateway;
 import com.restaurantmanager.api.domain.exception.EntityNotFoundException;
 import com.restaurantmanager.api.domain.model.MenuItem;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
 public class MenuItemService {
 
-    private final MenuItemPersistencePort menuItemPort;
-    private final RestaurantPersistencePort restaurantPort;
+    private final MenuItemGateway menuItemPort;
+    private final RestaurantGateway restaurantPort;
 
     public MenuItem create(MenuItem menuItem) {
-        // Ensure restaurant exists
         if (!restaurantPort.existsById(menuItem.getRestaurantId())) {
             throw new EntityNotFoundException("Restaurant", menuItem.getRestaurantId().toString());
         }
@@ -46,7 +43,6 @@ public class MenuItemService {
         MenuItem existing = menuItemPort.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("MenuItem", id.toString()));
 
-        // ensure restaurant exists
         if (!restaurantPort.existsById(menuItem.getRestaurantId())) {
             throw new EntityNotFoundException("Restaurant", menuItem.getRestaurantId().toString());
         }

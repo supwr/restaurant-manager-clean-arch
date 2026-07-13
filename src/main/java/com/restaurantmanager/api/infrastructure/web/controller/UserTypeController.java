@@ -1,11 +1,9 @@
 package com.restaurantmanager.api.infrastructure.web.controller;
 
-import com.restaurantmanager.api.application.usecase.UserTypeService;
+import com.restaurantmanager.api.application.usecase.usertype.UserTypeService;
 import com.restaurantmanager.api.infrastructure.web.dto.UserTypeDTO;
 import com.restaurantmanager.api.infrastructure.web.mapper.UserTypeWebMapper;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,14 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * REST controller for UserType management.
- * Exposes endpoints for CRUD operations on user types.
- */
 @RestController
-@RequestMapping("/api/v1/user-types")
-@RequiredArgsConstructor
-@Tag(name = "User Types", description = "User type management API")
 public class UserTypeController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserTypeController.class);
@@ -34,11 +25,7 @@ public class UserTypeController {
     private final UserTypeService userTypeService;
     private final UserTypeWebMapper webMapper;
 
-    /**
-     * Creates a new user type.
-     * @param request the user type data
-     * @return the created user type with HTTP 201
-     */
+
     @PostMapping
     @Operation(summary = "Create a new user type")
     @ApiResponses({

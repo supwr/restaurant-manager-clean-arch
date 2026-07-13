@@ -1,8 +1,5 @@
 package com.restaurantmanager.api.domain.exception;
 
-/**
- * Exception thrown when a required entity is not found.
- */
 public class EntityNotFoundException extends DomainException {
 
     private final String entityType;

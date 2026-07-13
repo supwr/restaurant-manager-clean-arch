@@ -1,6 +1,6 @@
 package com.restaurantmanager.api.infrastructure.persistence.adapter;
 
-import com.restaurantmanager.api.application.port.RestaurantPersistencePort;
+import com.restaurantmanager.api.application.gateway.RestaurantGateway;
 import com.restaurantmanager.api.domain.model.Restaurant;
 import com.restaurantmanager.api.infrastructure.persistence.entity.RestaurantEntity;
 import com.restaurantmanager.api.infrastructure.persistence.mapper.RestaurantPersistenceMapper;
@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class RestaurantPersistenceAdapter implements RestaurantPersistencePort {
+public class RestaurantPersistenceAdapter implements RestaurantGateway {
 
     private final RestaurantRepository repository;
     private final RestaurantPersistenceMapper mapper;

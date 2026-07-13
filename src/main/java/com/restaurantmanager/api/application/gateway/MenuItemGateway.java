@@ -1,11 +1,11 @@
-package com.restaurantmanager.api.application.port;
+package com.restaurantmanager.api.application.gateway;
 
 import com.restaurantmanager.api.domain.model.MenuItem;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface MenuItemPersistencePort {
+public interface MenuItemGateway {
 
     MenuItem save(MenuItem menuItem);
 

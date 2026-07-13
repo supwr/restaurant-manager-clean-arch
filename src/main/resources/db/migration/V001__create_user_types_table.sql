@@ -1,14 +1,17 @@
--- V001__create_user_types_table.sql
--- Creates the user_types table
+CREATE SEQUENCE IF NOT EXISTS "restaurant-manager".user_types_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
 CREATE TABLE IF NOT EXISTS user_types (
-    id BIGSERIAL PRIMARY KEY,
+    id BIGINT PRIMARY KEY DEFAULT nextval('"restaurant-manager".user_types_seq'),
+    uuid UUID NOT NULL DEFAULT gen_random_uuid(),
     name VARCHAR(100) NOT NULL UNIQUE,
-    observation VARCHAR(500),
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT user_types_pkey         PRIMARY KEY (id),
+    CONSTRAINT user_types_uuid_unique UNIQUE (uuid)
 );
-
--- Create index on name for faster lookups
-CREATE INDEX IF NOT EXISTS idx_user_types_name ON user_types(name);
-

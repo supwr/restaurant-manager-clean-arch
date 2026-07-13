@@ -1,6 +1,6 @@
 package com.restaurantmanager.api.infrastructure.web.controller;
 
-import com.restaurantmanager.api.application.usecase.MenuItemService;
+import com.restaurantmanager.api.application.usecase.menuitem.MenuItemService;
 import com.restaurantmanager.api.infrastructure.web.dto.MenuItemDTO;
 import com.restaurantmanager.api.infrastructure.web.mapper.MenuItemWebMapper;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -12,9 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/menu-items")
-@RequiredArgsConstructor
-@Tag(name = "Menu Items", description = "Menu item endpoints")
 public class MenuItemPublicController {
 
     private static final Logger logger = LoggerFactory.getLogger(MenuItemPublicController.class);

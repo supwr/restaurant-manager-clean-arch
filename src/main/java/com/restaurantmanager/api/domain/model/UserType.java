@@ -5,10 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-/**
- * Domain model for UserType.
- * Represents a classification for users (e.g., Restaurant Owner, Customer).
- */
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor

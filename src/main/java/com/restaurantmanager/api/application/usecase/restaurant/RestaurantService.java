@@ -1,8 +1,7 @@
-package com.restaurantmanager.api.application.usecase;
+package com.restaurantmanager.api.application.usecase.restaurant;
 
-import com.restaurantmanager.api.application.port.RestaurantPersistencePort;
+import com.restaurantmanager.api.application.gateway.RestaurantGateway;
 import com.restaurantmanager.api.domain.exception.EntityNotFoundException;
-import com.restaurantmanager.api.domain.exception.ValidationException;
 import com.restaurantmanager.api.domain.model.Restaurant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,7 +14,7 @@ import java.util.List;
 @Transactional
 public class RestaurantService {
 
-    private final RestaurantPersistencePort persistencePort;
+    private final RestaurantGateway persistencePort;
 
     public Restaurant create(Restaurant restaurant) {
         restaurant.validate();

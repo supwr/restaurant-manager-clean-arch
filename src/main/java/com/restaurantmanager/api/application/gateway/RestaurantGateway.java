@@ -1,11 +1,11 @@
-package com.restaurantmanager.api.application.port;
+package com.restaurantmanager.api.application.gateway;
 
 import com.restaurantmanager.api.domain.model.Restaurant;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface RestaurantPersistencePort {
+public interface RestaurantGateway {
 
     Restaurant save(Restaurant restaurant);
 

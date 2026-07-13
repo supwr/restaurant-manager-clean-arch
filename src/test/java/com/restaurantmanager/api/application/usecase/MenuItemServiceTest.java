@@ -1,9 +1,10 @@
 package com.restaurantmanager.api.application.usecase;
 
+import com.restaurantmanager.api.application.usecase.menuitem.MenuItemService;
 import com.restaurantmanager.api.domain.exception.EntityNotFoundException;
 import com.restaurantmanager.api.domain.model.MenuItem;
-import com.restaurantmanager.api.application.port.MenuItemPersistencePort;
-import com.restaurantmanager.api.application.port.RestaurantPersistencePort;
+import com.restaurantmanager.api.application.gateway.MenuItemGateway;
+import com.restaurantmanager.api.application.gateway.RestaurantGateway;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,10 +25,10 @@ import static org.mockito.Mockito.*;
 class MenuItemServiceTest {
 
     @Mock
-    private MenuItemPersistencePort menuItemPort;
+    private MenuItemGateway menuItemPort;
 
     @Mock
-    private RestaurantPersistencePort restaurantPort;
+    private RestaurantGateway restaurantPort;
 
     @InjectMocks
     private MenuItemService service;

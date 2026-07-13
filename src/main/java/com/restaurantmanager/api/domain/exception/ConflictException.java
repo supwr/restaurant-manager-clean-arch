@@ -1,8 +1,5 @@
 package com.restaurantmanager.api.domain.exception;
 
-/**
- * Exception thrown when an operation results in a conflict (e.g., referential integrity violation).
- */
 public class ConflictException extends DomainException {
 
     private final String resource;

@@ -1,8 +1,5 @@
 package com.restaurantmanager.api.domain.exception;
 
-/**
- * Exception thrown when a business rule or validation is violated.
- */
 public class ValidationException extends DomainException {
 
     private final String field;
