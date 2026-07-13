@@ -139,11 +139,15 @@ paths:
           $ref: '#/components/responses/InternalServerError'
   /api/v1/user-types:
     get:
+      tags: [ User Types ]
+      operationId: listUserTypes
       summary: List user types
       responses:
         '200':
           description: List returned successfully
     post:
+      tags: [ User Types ]
+      operationId: createUserType
       summary: Create a user type
       responses:
         '201':
@@ -152,6 +156,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
   /api/v1/user-types/{id}:
     get:
+      tags: [ User Types ]
+      operationId: getUserTypeById
       summary: Get a user type by id
       parameters:
         - name: id
@@ -165,6 +171,8 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
     put:
+      tags: [ User Types ]
+      operationId: updateUserType
       summary: Update a user type
       parameters:
         - name: id
@@ -180,6 +188,8 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
     delete:
+      tags: [ User Types ]
+      operationId: deleteUserType
       summary: Delete a user type
       parameters:
         - name: id
@@ -196,11 +206,15 @@ paths:
           $ref: '#/components/responses/Conflict'
   /api/v1/restaurants:
     get:
+      tags: [ Restaurants ]
+      operationId: listRestaurants
       summary: List restaurants
       responses:
         '200':
           description: List returned successfully
     post:
+      tags: [ Restaurants ]
+      operationId: createRestaurant
       summary: Create a restaurant
       responses:
         '201':
@@ -209,6 +223,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
   /api/v1/restaurants/{id}:
     get:
+      tags: [ Restaurants ]
+      operationId: getRestaurantById
       summary: Get a restaurant by id
       parameters:
         - name: id
@@ -222,6 +238,8 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
     put:
+      tags: [ Restaurants ]
+      operationId: updateRestaurant
       summary: Update a restaurant
       parameters:
         - name: id
@@ -237,6 +255,8 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
     delete:
+      tags: [ Restaurants ]
+      operationId: deleteRestaurant
       summary: Delete a restaurant
       parameters:
         - name: id
@@ -251,6 +271,8 @@ paths:
           $ref: '#/components/responses/Conflict'
   /api/v1/restaurants/{restaurantId}/menu-items:
     get:
+      tags: [ Menu Items ]
+      operationId: listMenuItems
       summary: List menu items for a restaurant
       parameters:
         - name: restaurantId
@@ -262,6 +284,8 @@ paths:
         '200':
           description: List returned successfully
     post:
+      tags: [ Menu Items ]
+      operationId: createMenuItem
       summary: Create a menu item for a restaurant
       parameters:
         - name: restaurantId
@@ -276,10 +300,17 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
-  /api/v1/menu-items/{id}:
+  /api/v1/restaurants/{restaurantId}/menu-items/{id}:
     get:
+      tags: [ Menu Items ]
+      operationId: getMenuItemById
       summary: Get a menu item by id
       parameters:
+        - name: restaurantId
+          in: path
+          required: true
+          schema:
+            type: string
         - name: id
           in: path
           required: true
@@ -291,8 +322,15 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
     put:
+      tags: [ Menu Items ]
+      operationId: updateMenuItem
       summary: Update a menu item
       parameters:
+        - name: restaurantId
+          in: path
+          required: true
+          schema:
+            type: string
         - name: id
           in: path
           required: true
@@ -306,8 +344,15 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
     delete:
+      tags: [ Menu Items ]
+      operationId: deleteMenuItem
       summary: Delete a menu item
       parameters:
+        - name: restaurantId
+          in: path
+          required: true
+          schema:
+            type: string
         - name: id
           in: path
           required: true
