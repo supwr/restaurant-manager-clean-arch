@@ -114,8 +114,8 @@
 							<inputSpec>
 								${project.basedir}/src/main/resources/openapi/restaurant-manager-api.yaml</inputSpec>
 							<generatorName>spring</generatorName>
-							<apiPackage>br.com.restaurantmanager.api</apiPackage>
-							<modelPackage>br.com.restaurantmanager.api.model</modelPackage>
+							<apiPackage>com.restaurantmanager.api</apiPackage>
+							<modelPackage>com.restaurantmanager.api.model</modelPackage>
 							<configOptions>
 								<useTags>true</useTags>
 								<useSpringBoot3>true</useSpringBoot3>

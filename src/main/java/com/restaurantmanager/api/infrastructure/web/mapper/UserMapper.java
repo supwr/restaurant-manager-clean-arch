@@ -1,8 +1,9 @@
 package com.restaurantmanager.api.infrastructure.web.mapper;
 
+import com.restaurantmanager.api.model.UserResponse;
 import com.restaurantmanager.api.domain.model.Address;
 import com.restaurantmanager.api.domain.model.User;
-import com.restaurantmanager.api.model.UserResponse;
+
 import com.restaurantmanager.api.model.UserType;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
