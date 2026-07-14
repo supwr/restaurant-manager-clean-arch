@@ -1,48 +1,49 @@
-package com.restaurantmanager.api.infrastructure.persistence.adapter;
+package com.restaurantmanager.api.infrastructure.persistence.gateway;
 
 import com.restaurantmanager.api.application.gateway.MenuItemGateway;
 import com.restaurantmanager.api.domain.model.MenuItem;
 import com.restaurantmanager.api.infrastructure.persistence.mapper.MenuItemPersistenceMapper;
-import com.restaurantmanager.api.infrastructure.persistence.entity.MenuItemEntity;
 import com.restaurantmanager.api.infrastructure.persistence.repository.MenuItemRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
 
 @Component
-@RequiredArgsConstructor
-public class MenuItemPersistenceAdapter implements MenuItemGateway {
+public class MenuItemPersistenceGateway implements MenuItemGateway {
 
     private final MenuItemRepository repository;
     private final MenuItemPersistenceMapper mapper;
 
-    @Override
-    public MenuItem save(MenuItem menuItem) {
-        MenuItemEntity entity = mapper.toEntity(menuItem);
-        MenuItemEntity saved = repository.save(entity);
-        return mapper.toDomain(saved);
+    public MenuItemPersistenceGateway(final MenuItemRepository repository, final MenuItemPersistenceMapper mapper) {
+        this.repository = repository;
+        this.mapper = mapper;
     }
 
     @Override
-    public Optional<MenuItem> findById(Long id) {
+    public MenuItem save(final MenuItem menuItem) {
+        return mapper.toDomain(repository.save(mapper.toEntity(menuItem)));
+    }
+
+    @Override
+    public Optional<MenuItem> findById(final Long id) {
         return repository.findById(id).map(mapper::toDomain);
     }
 
     @Override
-    public List<MenuItem> findByRestaurantId(Long restaurantId) {
+    public List<MenuItem> findByRestaurantId(final Long restaurantId) {
         return repository.findByRestaurantId(restaurantId).stream().map(mapper::toDomain).toList();
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(final Long id) {
         repository.deleteById(id);
     }
 
     @Override
-    public boolean existsById(Long id) {
+    public boolean existsById(final Long id) {
         return repository.existsById(id);
     }
 }
+
 

@@ -18,11 +18,19 @@ public interface UserMapper {
     UserResponse map(User user);
 
     default UserType resolveType(final User user) {
-        return switch (user.getClass().getSimpleName()) {
-            case "Owner" -> UserType.RESTAURANT_OWNER;
-            case "Customer" -> UserType.CUSTOMER;
+        if (user == null) {
+            return null;
+        }
+
+        com.restaurantmanager.api.model.UserType result = new com.restaurantmanager.api.model.UserType();
+        final String simpleName = user.getClass().getSimpleName();
+        switch (simpleName) {
+            case "Owner" -> result.setName(User.OWNER_TYPE);
+            case "Customer" -> result.setName(User.CUSTOMER_TYPE);
             default -> throw new IllegalArgumentException("Unsupported user subtype: " + user.getClass().getName());
-        };
+        }
+
+        return result;
     }
 
     default com.restaurantmanager.api.model.Address map(final Address address) {

@@ -1,29 +1,34 @@
 package com.restaurantmanager.api.domain.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.restaurantmanager.api.domain.exception.ValidationException;
 
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class UserType {
 
-    private Long id;
-    private String name;
-    private String observation;
+    private final Long id;
+    private final String name;
+    private final String observation;
 
-    /**
-     * Validates the UserType business rules.
-     * @throws com.restaurantmanager.api.domain.exception.ValidationException if validation fails
-     */
+    public UserType(final Long id, final String name, final String observation) {
+        this.id = id;
+        this.name = name;
+        this.observation = observation;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getObservation() {
+        return observation;
+    }
+
     public void validate() {
         if (name == null || name.isBlank()) {
-            throw new com.restaurantmanager.api.domain.exception.ValidationException(
-                "name", name, "User type name is required and must not be blank"
-            );
+            throw new ValidationException("name", name, "User type name is required and must not be blank");
         }
     }
 }

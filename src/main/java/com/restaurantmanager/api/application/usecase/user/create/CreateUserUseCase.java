@@ -1,57 +1,42 @@
 package com.restaurantmanager.api.application.usecase.user.create;
 
-import br.com.restaurantmanager.api.adapters.outbound.persistence.entity.UserJpaEntity;
-import br.com.restaurantmanager.api.adapters.outbound.persistence.mapper.UserPersistenceMapper;
-import br.com.restaurantmanager.api.domain.exception.DomainException;
-import br.com.restaurantmanager.api.domain.factory.UserFactory;
-import br.com.restaurantmanager.api.domain.model.Address;
-import br.com.restaurantmanager.api.domain.model.User;
-import br.com.restaurantmanager.api.ports.outbound.encryption.EncryptionService;
-import br.com.restaurantmanager.api.ports.outbound.persistence.UserRepository;
+import com.restaurantmanager.api.application.gateway.UserGateway;
+import com.restaurantmanager.api.domain.exception.ValidationException;
+import com.restaurantmanager.api.domain.model.User;
 
-import java.time.Instant;
 import java.util.Objects;
 
 public class CreateUserUseCase {
 
-	private final UserRepository userRepository;
-	private final UserPersistenceMapper userPersistenceMapper;
-	private final EncryptionService encryptionService;
+	private final UserGateway userGateway;
 
-	public CreateUserUseCase(
-			final UserRepository userRepository,
-			final UserPersistenceMapper userPersistenceMapper,
-			final EncryptionService encryptionService
-	) {
-		this.userRepository = Objects.requireNonNull(userRepository);
-		this.userPersistenceMapper = Objects.requireNonNull(userPersistenceMapper);
-		this.encryptionService = Objects.requireNonNull(encryptionService);
+	public CreateUserUseCase(final UserGateway userGateway) {
+		this.userGateway = Objects.requireNonNull(userGateway, "userGateway must not be null");
 	}
 
-	public CreateUserOutput execute(final CreateUserCommand command) {
-		if (userRepository.findByEmailIgnoreCase(command.email()).isPresent()) {
-			throw new DomainException("Conflict", "Email already exists", 409);
+	public User execute(final User user) {
+		Objects.requireNonNull(user, "user must not be null");
+		validateUser(user);
+
+		if (userGateway.findByEmailIgnoreCase(user.getEmail()).isPresent()) {
+			throw new ValidationException("email", user.getEmail(), "Email already exists");
 		}
-		if (userRepository.findByLoginIgnoreCase(command.login()).isPresent()) {
-			throw new DomainException("Conflict", "Login already exists", 409);
+		if (userGateway.findByLoginIgnoreCase(user.getLogin()).isPresent()) {
+			throw new ValidationException("login", user.getLogin(), "Login already exists");
 		}
 
-		final var now = Instant.now();
-		final User user = UserFactory.create(
-				null,
-				null,
-				command.type(),
-				command.name(),
-				command.email(),
-				command.login(),
-				true,
-				encryptionService.encode(command.password()),
-				new Address(command.street(), command.number(), command.city(), command.zipCode()),
-				now,
-				now
-		);
+		return userGateway.save(user);
+	}
 
-		final UserJpaEntity saved = userRepository.save(userPersistenceMapper.fromDomain(user));
-		return new CreateUserOutput(userPersistenceMapper.toDomain(saved));
+	private void validateUser(final User user) {
+		if (user.getName() == null || user.getName().isBlank()) {
+			throw new ValidationException("name", user.getName(), "User name is required");
+		}
+		if (user.getEmail() == null || user.getEmail().isBlank()) {
+			throw new ValidationException("email", user.getEmail(), "User email is required");
+		}
+		if (user.getLogin() == null || user.getLogin().isBlank()) {
+			throw new ValidationException("login", user.getLogin(), "User login is required");
+		}
 	}
 }

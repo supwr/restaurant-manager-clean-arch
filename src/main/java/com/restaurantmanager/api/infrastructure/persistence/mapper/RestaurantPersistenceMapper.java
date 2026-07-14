@@ -9,8 +9,32 @@ import org.mapstruct.ReportingPolicy;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface RestaurantPersistenceMapper {
 
-    Restaurant toDomain(RestaurantEntity entity);
+    default Restaurant toDomain(final RestaurantEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+        return new Restaurant(
+            entity.getId(),
+            entity.getName(),
+            entity.getAddress(),
+            entity.getCuisineType(),
+            entity.getOpeningHours(),
+            entity.getOwnerUserId()
+        );
+    }
 
-    RestaurantEntity toEntity(Restaurant domain);
+    default RestaurantEntity toEntity(final Restaurant domain) {
+        if (domain == null) {
+            return null;
+        }
+        final RestaurantEntity entity = new RestaurantEntity();
+        entity.setId(domain.getId());
+        entity.setName(domain.getName());
+        entity.setAddress(domain.getAddress());
+        entity.setCuisineType(domain.getCuisineType());
+        entity.setOpeningHours(domain.getOpeningHours());
+        entity.setOwnerUserId(domain.getOwnerUserId());
+        return entity;
+    }
 }
 

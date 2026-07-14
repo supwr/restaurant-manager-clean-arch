@@ -9,8 +9,34 @@ import org.mapstruct.ReportingPolicy;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface MenuItemPersistenceMapper {
 
-    MenuItem toDomain(MenuItemEntity entity);
+    default MenuItem toDomain(final MenuItemEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+        return new MenuItem(
+            entity.getId(),
+            entity.getRestaurantId(),
+            entity.getName(),
+            entity.getDescription(),
+            entity.getPrice(),
+            entity.getLocalOnly(),
+            entity.getPhotoPath()
+        );
+    }
 
-    MenuItemEntity toEntity(MenuItem domain);
+    default MenuItemEntity toEntity(final MenuItem domain) {
+        if (domain == null) {
+            return null;
+        }
+        final MenuItemEntity entity = new MenuItemEntity();
+        entity.setId(domain.getId());
+        entity.setRestaurantId(domain.getRestaurantId());
+        entity.setName(domain.getName());
+        entity.setDescription(domain.getDescription());
+        entity.setPrice(domain.getPrice());
+        entity.setLocalOnly(domain.getLocalOnly());
+        entity.setPhotoPath(domain.getPhotoPath());
+        return entity;
+    }
 }
 

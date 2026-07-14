@@ -1,4 +1,37 @@
 package com.restaurantmanager.api.application.usecase.menuitem.get;
 
+import com.restaurantmanager.api.application.gateway.MenuItemGateway;
+import com.restaurantmanager.api.application.gateway.RestaurantGateway;
+import com.restaurantmanager.api.domain.exception.EntityNotFoundException;
+import com.restaurantmanager.api.domain.model.MenuItem;
+
+import java.util.Objects;
+
 public class GetMenuItemUseCase {
+
+	private final MenuItemGateway menuItemGateway;
+	private final RestaurantGateway restaurantGateway;
+
+	public GetMenuItemUseCase(final MenuItemGateway menuItemGateway, final RestaurantGateway restaurantGateway) {
+		this.menuItemGateway = Objects.requireNonNull(menuItemGateway, "menuItemGateway must not be null");
+		this.restaurantGateway = Objects.requireNonNull(restaurantGateway, "restaurantGateway must not be null");
+	}
+
+	public MenuItem execute(final Long restaurantId, final Long id) {
+		Objects.requireNonNull(restaurantId, "restaurantId must not be null");
+		Objects.requireNonNull(id, "id must not be null");
+
+		if (!restaurantGateway.existsById(restaurantId)) {
+			throw new EntityNotFoundException("Restaurant", restaurantId.toString());
+		}
+
+		final MenuItem menuItem = menuItemGateway.findById(id)
+			.orElseThrow(() -> new EntityNotFoundException("MenuItem", id.toString()));
+
+		if (!restaurantId.equals(menuItem.getRestaurantId())) {
+			throw new EntityNotFoundException("MenuItem", id.toString());
+		}
+
+		return menuItem;
+	}
 }

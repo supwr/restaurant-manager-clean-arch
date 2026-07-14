@@ -1,23 +1,55 @@
 package com.restaurantmanager.api.domain.model;
 
 import com.restaurantmanager.api.domain.exception.ValidationException;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Restaurant {
 
-    private Long id;
-    private String name;
-    private String address;
-    private String cuisineType;
-    private String openingHours;
-    private Long ownerUserId;
+    private final Long id;
+    private final String name;
+    private final String address;
+    private final String cuisineType;
+    private final String openingHours;
+    private final Long ownerUserId;
+
+    public Restaurant(
+            final Long id,
+            final String name,
+            final String address,
+            final String cuisineType,
+            final String openingHours,
+            final Long ownerUserId
+    ) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+        this.cuisineType = cuisineType;
+        this.openingHours = openingHours;
+        this.ownerUserId = ownerUserId;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getCuisineType() {
+        return cuisineType;
+    }
+
+    public String getOpeningHours() {
+        return openingHours;
+    }
+
+    public Long getOwnerUserId() {
+        return ownerUserId;
+    }
 
     public void validate() {
         if (name == null || name.isBlank()) {
