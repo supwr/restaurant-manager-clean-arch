@@ -170,18 +170,18 @@ paths:
                 $ref: '#/components/schemas/UserTypeResponse'
         '400':
           $ref: '#/components/responses/BadRequest'
-  /api/v1/user-types/{id}:
+  /api/v1/user-types/{userTypeUuid}:
     get:
       tags: [ User Types ]
       operationId: getUserTypeById
       summary: Get a user type by id
       parameters:
-        - name: id
+        - name: userTypeUuid
           in: path
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: User type found
@@ -196,12 +196,12 @@ paths:
       operationId: updateUserType
       summary: Update a user type
       parameters:
-        - name: id
+        - name: userTypeUuid
           in: path
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       requestBody:
         required: true
         content:
@@ -224,12 +224,12 @@ paths:
       operationId: deleteUserType
       summary: Delete a user type
       parameters:
-        - name: id
+        - name: userTypeUuid
           in: path
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '204':
           description: User type deleted
@@ -283,18 +283,18 @@ paths:
                 $ref: '#/components/schemas/RestaurantResponse'
         '400':
           $ref: '#/components/responses/BadRequest'
-  /api/v1/restaurants/{id}:
+  /api/v1/restaurants/{restaurantUuid}:
     get:
       tags: [ Restaurants ]
       operationId: getRestaurantById
       summary: Get a restaurant by id
       parameters:
-        - name: id
+        - name: restaurantUuid
           in: path
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Restaurant found
@@ -309,12 +309,12 @@ paths:
       operationId: updateRestaurant
       summary: Update a restaurant
       parameters:
-        - name: id
+        - name: restaurantUuid
           in: path
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       requestBody:
         required: true
         content:
@@ -337,29 +337,29 @@ paths:
       operationId: deleteRestaurant
       summary: Delete a restaurant
       parameters:
-        - name: id
+        - name: restaurantUuid
           in: path
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '204':
           description: Restaurant deleted
         '409':
           $ref: '#/components/responses/Conflict'
-  /api/v1/restaurants/{restaurantId}/menu-items:
+  /api/v1/restaurants/{restaurantUuid}/menu-items:
     get:
       tags: [ Menu Items ]
       operationId: listMenuItems
       summary: List menu items for a restaurant
       parameters:
-        - name: restaurantId
+        - name: restaurantUuid
           in: path
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: page
           in: query
           required: false
@@ -386,12 +386,12 @@ paths:
       operationId: createMenuItem
       summary: Create a menu item for a restaurant
       parameters:
-        - name: restaurantId
+        - name: restaurantUuid
           in: path
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       requestBody:
         required: true
         content:
@@ -409,24 +409,24 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
-  /api/v1/restaurants/{restaurantId}/menu-items/{id}:
+  /api/v1/restaurants/{restaurantUuid}/menu-items/{menuItemUuid}:
     get:
       tags: [ Menu Items ]
       operationId: getMenuItemById
       summary: Get a menu item by id
       parameters:
-        - name: restaurantId
+        - name: restaurantUuid
           in: path
           required: true
           schema:
-            type: integer
-            format: int64
-        - name: id
+            type: string
+            format: uuid
+        - name: menuItemUuid
           in: path
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Menu item found
@@ -441,18 +441,18 @@ paths:
       operationId: updateMenuItem
       summary: Update a menu item
       parameters:
-        - name: restaurantId
+        - name: restaurantUuid
           in: path
           required: true
           schema:
-            type: integer
-            format: int64
-        - name: id
+            type: string
+            format: uuid
+        - name: menuItemUuid
           in: path
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       requestBody:
         required: true
         content:
@@ -475,18 +475,18 @@ paths:
       operationId: deleteMenuItem
       summary: Delete a menu item
       parameters:
-        - name: restaurantId
+        - name: restaurantUuid
           in: path
           required: true
           schema:
-            type: integer
-            format: int64
-        - name: id
+            type: string
+            format: uuid
+        - name: menuItemUuid
           in: path
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '204':
           description: Menu item deleted
@@ -534,6 +534,9 @@ components:
         id:
           type: integer
           format: int64
+        uuid:
+          type: string
+          format: uuid
         name:
           type: string
           example: OWNER
@@ -565,6 +568,9 @@ components:
         id:
           type: integer
           format: int64
+        uuid:
+          type: string
+          format: uuid
         name:
           type: string
         address:
@@ -601,9 +607,15 @@ components:
         id:
           type: integer
           format: int64
+        uuid:
+          type: string
+          format: uuid
         restaurantId:
           type: integer
           format: int64
+        restaurantUuid:
+          type: string
+          format: uuid
         name:
           type: string
         description:

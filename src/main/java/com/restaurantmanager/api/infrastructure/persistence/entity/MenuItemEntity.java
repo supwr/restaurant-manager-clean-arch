@@ -11,6 +11,7 @@ import jakarta.persistence.Table;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "menu_items")
@@ -19,6 +20,9 @@ public class MenuItemEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false, unique = true, updatable = false)
+    private UUID uuid;
 
     @Column(name = "restaurant_id", nullable = false)
     private Long restaurantId;
@@ -50,6 +54,14 @@ public class MenuItemEntity {
 
     public void setId(final Long id) {
         this.id = id;
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(final UUID uuid) {
+        this.uuid = uuid;
     }
 
     public Long getRestaurantId() {
@@ -121,6 +133,9 @@ public class MenuItemEntity {
         final LocalDateTime now = LocalDateTime.now();
         createdAt = now;
         updatedAt = now;
+        if (this.uuid == null) {
+            this.uuid = UUID.randomUUID();
+        }
     }
 
     @PreUpdate

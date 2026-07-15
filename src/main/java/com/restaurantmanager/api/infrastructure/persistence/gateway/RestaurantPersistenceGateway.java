@@ -31,6 +31,11 @@ public class RestaurantPersistenceGateway implements RestaurantGateway {
     }
 
     @Override
+    public Optional<Restaurant> findByUuid(final java.util.UUID uuid) {
+        return repository.findByUuid(uuid).map(mapper::toDomain);
+    }
+
+    @Override
     public List<Restaurant> findAll() {
         return repository.findAll().stream().map(mapper::toDomain).toList();
     }
@@ -43,6 +48,11 @@ public class RestaurantPersistenceGateway implements RestaurantGateway {
     @Override
     public boolean existsById(final Long id) {
         return repository.existsById(id);
+    }
+
+    @Override
+    public boolean existsByUuid(final java.util.UUID uuid) {
+        return repository.existsByUuid(uuid);
     }
 }
 

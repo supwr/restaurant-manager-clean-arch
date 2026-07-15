@@ -15,6 +15,7 @@ public interface MenuItemPersistenceMapper {
         }
         return new MenuItem(
             entity.getId(),
+            entity.getUuid(),
             entity.getRestaurantId(),
             entity.getName(),
             entity.getDescription(),
@@ -30,6 +31,7 @@ public interface MenuItemPersistenceMapper {
         }
         final MenuItemEntity entity = new MenuItemEntity();
         entity.setId(domain.getId());
+        entity.setUuid(domain.getUuid());
         entity.setRestaurantId(domain.getRestaurantId());
         entity.setName(domain.getName());
         entity.setDescription(domain.getDescription());

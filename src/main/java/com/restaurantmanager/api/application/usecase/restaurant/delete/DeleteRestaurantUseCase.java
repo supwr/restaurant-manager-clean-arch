@@ -10,11 +10,11 @@ public class DeleteRestaurantUseCase {
 	private final RestaurantGateway restaurantGateway;
 
 	public DeleteRestaurantUseCase(final RestaurantGateway restaurantGateway) {
-		this.restaurantGateway = Objects.requireNonNull(restaurantGateway, "restaurantGateway must not be null");
+		this.restaurantGateway = Objects.requireNonNull(restaurantGateway);
 	}
 
 	public void execute(final Long id) {
-		Objects.requireNonNull(id, "id must not be null");
+		Objects.requireNonNull(id);
 
 		if (!restaurantGateway.existsById(id)) {
 			throw new EntityNotFoundException("Restaurant", id.toString());

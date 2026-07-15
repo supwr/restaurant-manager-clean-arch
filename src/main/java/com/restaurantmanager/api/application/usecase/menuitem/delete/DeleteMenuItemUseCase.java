@@ -12,13 +12,13 @@ public class DeleteMenuItemUseCase {
 	private final RestaurantGateway restaurantGateway;
 
 	public DeleteMenuItemUseCase(final MenuItemGateway menuItemGateway, final RestaurantGateway restaurantGateway) {
-		this.menuItemGateway = Objects.requireNonNull(menuItemGateway, "menuItemGateway must not be null");
-		this.restaurantGateway = Objects.requireNonNull(restaurantGateway, "restaurantGateway must not be null");
+		this.menuItemGateway = Objects.requireNonNull(menuItemGateway);
+		this.restaurantGateway = Objects.requireNonNull(restaurantGateway);
 	}
 
 	public void execute(final Long restaurantId, final Long id) {
-		Objects.requireNonNull(restaurantId, "restaurantId must not be null");
-		Objects.requireNonNull(id, "id must not be null");
+		Objects.requireNonNull(restaurantId);
+		Objects.requireNonNull(id);
 
 		if (!restaurantGateway.existsById(restaurantId)) {
 			throw new EntityNotFoundException("Restaurant", restaurantId.toString());

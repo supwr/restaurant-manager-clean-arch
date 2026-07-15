@@ -10,6 +10,7 @@ import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "user_types")
@@ -18,6 +19,9 @@ public class UserTypeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false, unique = true, updatable = false)
+    private UUID uuid;
 
     @Column(nullable = false, unique = true, length = 100)
     private String name;
@@ -37,6 +41,14 @@ public class UserTypeEntity {
 
     public void setId(final Long id) {
         this.id = id;
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(final UUID uuid) {
+        this.uuid = uuid;
     }
 
     public String getName() {
@@ -76,6 +88,9 @@ public class UserTypeEntity {
         final LocalDateTime now = LocalDateTime.now();
         createdAt = now;
         updatedAt = now;
+        if (this.uuid == null) {
+            this.uuid = UUID.randomUUID();
+        }
     }
 
     @PreUpdate

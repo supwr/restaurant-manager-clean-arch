@@ -15,6 +15,7 @@ public interface RestaurantPersistenceMapper {
         }
         return new Restaurant(
             entity.getId(),
+            entity.getUuid(),
             entity.getName(),
             entity.getAddress(),
             entity.getCuisineType(),
@@ -29,6 +30,7 @@ public interface RestaurantPersistenceMapper {
         }
         final RestaurantEntity entity = new RestaurantEntity();
         entity.setId(domain.getId());
+        entity.setUuid(domain.getUuid());
         entity.setName(domain.getName());
         entity.setAddress(domain.getAddress());
         entity.setCuisineType(domain.getCuisineType());

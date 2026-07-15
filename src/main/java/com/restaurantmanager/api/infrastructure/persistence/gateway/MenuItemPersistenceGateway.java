@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 public class MenuItemPersistenceGateway implements MenuItemGateway {
@@ -31,6 +32,11 @@ public class MenuItemPersistenceGateway implements MenuItemGateway {
     }
 
     @Override
+    public Optional<MenuItem> findByUuid(final UUID uuid) {
+        return repository.findByUuid(uuid).map(mapper::toDomain);
+    }
+
+    @Override
     public List<MenuItem> findByRestaurantId(final Long restaurantId) {
         return repository.findByRestaurantId(restaurantId).stream().map(mapper::toDomain).toList();
     }
@@ -43,6 +49,11 @@ public class MenuItemPersistenceGateway implements MenuItemGateway {
     @Override
     public boolean existsById(final Long id) {
         return repository.existsById(id);
+    }
+
+    @Override
+    public boolean existsByUuid(final UUID uuid) {
+        return repository.existsByUuid(uuid);
     }
 }
 

@@ -4,6 +4,7 @@ import com.restaurantmanager.api.domain.model.MenuItem;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface MenuItemGateway {
 
@@ -11,10 +12,14 @@ public interface MenuItemGateway {
 
     Optional<MenuItem> findById(Long id);
 
+    Optional<MenuItem> findByUuid(UUID uuid);
+
     List<MenuItem> findByRestaurantId(Long restaurantId);
 
     void deleteById(Long id);
 
     boolean existsById(Long id);
+
+    boolean existsByUuid(UUID uuid);
 }
 

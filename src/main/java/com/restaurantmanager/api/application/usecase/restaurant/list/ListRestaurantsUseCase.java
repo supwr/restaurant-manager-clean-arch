@@ -14,11 +14,11 @@ public class ListRestaurantsUseCase {
 	private final RestaurantGateway restaurantGateway;
 
 	public ListRestaurantsUseCase(final RestaurantGateway restaurantGateway) {
-		this.restaurantGateway = Objects.requireNonNull(restaurantGateway, "restaurantGateway must not be null");
+		this.restaurantGateway = Objects.requireNonNull(restaurantGateway);
 	}
 
 	public PageResult<Restaurant> execute(final Pagination pagination) {
-		Objects.requireNonNull(pagination, "pagination must not be null");
+		Objects.requireNonNull(pagination);
 		if (pagination.getSize() <= 0) {
 			throw new ValidationException("size", pagination.getSize(), "Page size must be greater than zero");
 		}

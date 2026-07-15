@@ -3,10 +3,12 @@ package com.restaurantmanager.api.domain.model;
 import com.restaurantmanager.api.domain.exception.ValidationException;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 public class MenuItem {
 
     private final Long id;
+    private final UUID uuid;
     private final Long restaurantId;
     private final String name;
     private final String description;
@@ -24,6 +26,27 @@ public class MenuItem {
             final String photoPath
     ) {
         this.id = id;
+        this.uuid = null;
+        this.restaurantId = restaurantId;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.localOnly = localOnly;
+        this.photoPath = photoPath;
+    }
+
+    public MenuItem(
+            final Long id,
+            final UUID uuid,
+            final Long restaurantId,
+            final String name,
+            final String description,
+            final BigDecimal price,
+            final Boolean localOnly,
+            final String photoPath
+    ) {
+        this.id = id;
+        this.uuid = uuid;
         this.restaurantId = restaurantId;
         this.name = name;
         this.description = description;
@@ -34,6 +57,10 @@ public class MenuItem {
 
     public Long getId() {
         return id;
+    }
+
+    public UUID getUuid() {
+        return uuid;
     }
 
     public Long getRestaurantId() {
@@ -81,4 +108,3 @@ public class MenuItem {
         }
     }
 }
-

@@ -11,12 +11,12 @@ public class UpdateRestaurantUseCase {
 	private final RestaurantGateway restaurantGateway;
 
 	public UpdateRestaurantUseCase(final RestaurantGateway restaurantGateway) {
-		this.restaurantGateway = Objects.requireNonNull(restaurantGateway, "restaurantGateway must not be null");
+		this.restaurantGateway = Objects.requireNonNull(restaurantGateway);
 	}
 
 	public Restaurant execute(final Long id, final Restaurant restaurant) {
-		Objects.requireNonNull(id, "id must not be null");
-		Objects.requireNonNull(restaurant, "restaurant must not be null");
+		Objects.requireNonNull(id);
+		Objects.requireNonNull(restaurant);
 
 		restaurantGateway.findById(id)
 			.orElseThrow(() -> new EntityNotFoundException("Restaurant", id.toString()));

@@ -7,6 +7,10 @@ import com.restaurantmanager.api.application.usecase.restaurant.get.GetRestauran
 import com.restaurantmanager.api.application.usecase.restaurant.list.ListRestaurantsUseCase;
 import com.restaurantmanager.api.application.usecase.restaurant.update.UpdateRestaurantUseCase;
 import com.restaurantmanager.api.domain.model.Restaurant;
+import com.restaurantmanager.api.application.gateway.RestaurantGateway;
+import com.restaurantmanager.api.domain.exception.EntityNotFoundException;
+import com.restaurantmanager.api.infrastructure.web.mapper.RestaurantMapper;
+import java.util.UUID;
 import com.restaurantmanager.api.domain.model.Pagination;
 import com.restaurantmanager.api.model.RestaurantRequest;
 import com.restaurantmanager.api.model.RestaurantResponse;
@@ -26,70 +30,61 @@ public class RestaurantController implements RestaurantsApi {
     private final ListRestaurantsUseCase listRestaurantsUseCase;
     private final UpdateRestaurantUseCase updateRestaurantUseCase;
     private final DeleteRestaurantUseCase deleteRestaurantUseCase;
+    private final RestaurantGateway restaurantGateway;
+    private final RestaurantMapper restaurantMapper;
 
     public RestaurantController(
         final CreateRestaurantUseCase createRestaurantUseCase,
         final GetRestaurantUseCase getRestaurantUseCase,
         final ListRestaurantsUseCase listRestaurantsUseCase,
         final UpdateRestaurantUseCase updateRestaurantUseCase,
-        final DeleteRestaurantUseCase deleteRestaurantUseCase
+        final DeleteRestaurantUseCase deleteRestaurantUseCase,
+        final RestaurantGateway restaurantGateway,
+        final RestaurantMapper restaurantMapper
     ) {
         this.createRestaurantUseCase = Objects.requireNonNull(createRestaurantUseCase);
         this.getRestaurantUseCase = Objects.requireNonNull(getRestaurantUseCase);
         this.listRestaurantsUseCase = Objects.requireNonNull(listRestaurantsUseCase);
         this.updateRestaurantUseCase = Objects.requireNonNull(updateRestaurantUseCase);
         this.deleteRestaurantUseCase = Objects.requireNonNull(deleteRestaurantUseCase);
+        this.restaurantGateway = Objects.requireNonNull(restaurantGateway);
+        this.restaurantMapper = Objects.requireNonNull(restaurantMapper);
     }
 
     @Override
     public ResponseEntity<RestaurantResponse> createRestaurant(@Valid final RestaurantRequest restaurantRequest) {
-        final Restaurant created = createRestaurantUseCase.execute(toDomain(null, restaurantRequest));
-        return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(created));
+        final Restaurant created = createRestaurantUseCase.execute(restaurantMapper.map(restaurantRequest));
+        return ResponseEntity.status(HttpStatus.CREATED).body(restaurantMapper.map(created));
     }
 
     @Override
-    public ResponseEntity<Void> deleteRestaurant(final Long id) {
-        deleteRestaurantUseCase.execute(id);
+    public ResponseEntity<Void> deleteRestaurant(final UUID id) {
+        final Long internalId = restaurantGateway.findByUuid(id)
+            .orElseThrow(() -> new EntityNotFoundException("Restaurant", id.toString()))
+            .getId();
+        deleteRestaurantUseCase.execute(internalId);
         return ResponseEntity.noContent().build();
     }
 
     @Override
-    public ResponseEntity<RestaurantResponse> getRestaurantById(final Long id) {
-        return ResponseEntity.ok(toResponse(getRestaurantUseCase.execute(id)));
+    public ResponseEntity<RestaurantResponse> getRestaurantById(final UUID id) {
+        final var restaurant = restaurantGateway.findByUuid(id)
+            .orElseThrow(() -> new EntityNotFoundException("Restaurant", id.toString()));
+        return ResponseEntity.ok(restaurantMapper.map(restaurant));
     }
 
     @Override
     public ResponseEntity<List<RestaurantResponse>> listRestaurants(final Integer page, final Integer size) {
         final int p = page == null ? 0 : page;
         final int s = size == null ? 20 : size;
-        return ResponseEntity.ok(listRestaurantsUseCase.execute(new Pagination(p, s, "id")).getContent().stream().map(this::toResponse).toList());
+        return ResponseEntity.ok(listRestaurantsUseCase.execute(new Pagination(p, s, "id")).getContent().stream().map(restaurantMapper::map).toList());
     }
 
     @Override
-    public ResponseEntity<RestaurantResponse> updateRestaurant(final Long id, @Valid final RestaurantRequest restaurantRequest) {
-        return ResponseEntity.ok(toResponse(updateRestaurantUseCase.execute(id, toDomain(id, restaurantRequest))));
-    }
-
-    private Restaurant toDomain(final Long id, final RestaurantRequest request) {
-        return new Restaurant(
-            id,
-            request.getName(),
-            request.getAddress(),
-            request.getCuisineType(),
-            request.getOpeningHours(),
-            request.getOwnerUserId()
-        );
-    }
-
-    private RestaurantResponse toResponse(final Restaurant restaurant) {
-        final RestaurantResponse response = new RestaurantResponse();
-        response.setId(restaurant.getId());
-        response.setName(restaurant.getName());
-        response.setAddress(restaurant.getAddress());
-        response.setCuisineType(restaurant.getCuisineType());
-        response.setOpeningHours(restaurant.getOpeningHours());
-        response.setOwnerUserId(restaurant.getOwnerUserId());
-        return response;
+    public ResponseEntity<RestaurantResponse> updateRestaurant(final UUID id, @Valid final RestaurantRequest restaurantRequest) {
+        final Long internalId = restaurantGateway.findByUuid(id)
+            .orElseThrow(() -> new EntityNotFoundException("Restaurant", id.toString()))
+            .getId();
+        return ResponseEntity.ok(restaurantMapper.map(updateRestaurantUseCase.execute(internalId, restaurantMapper.map(internalId, restaurantRequest))));
     }
 }
-

@@ -1,10 +1,12 @@
 package com.restaurantmanager.api.domain.model;
 
 import com.restaurantmanager.api.domain.exception.ValidationException;
+import java.util.UUID;
 
 public class Restaurant {
 
     private final Long id;
+    private final UUID uuid;
     private final String name;
     private final String address;
     private final String cuisineType;
@@ -20,6 +22,25 @@ public class Restaurant {
             final Long ownerUserId
     ) {
         this.id = id;
+        this.uuid = null;
+        this.name = name;
+        this.address = address;
+        this.cuisineType = cuisineType;
+        this.openingHours = openingHours;
+        this.ownerUserId = ownerUserId;
+    }
+
+    public Restaurant(
+            final Long id,
+            final UUID uuid,
+            final String name,
+            final String address,
+            final String cuisineType,
+            final String openingHours,
+            final Long ownerUserId
+    ) {
+        this.id = id;
+        this.uuid = uuid;
         this.name = name;
         this.address = address;
         this.cuisineType = cuisineType;
@@ -29,6 +50,10 @@ public class Restaurant {
 
     public Long getId() {
         return id;
+    }
+
+    public UUID getUuid() {
+        return uuid;
     }
 
     public String getName() {
