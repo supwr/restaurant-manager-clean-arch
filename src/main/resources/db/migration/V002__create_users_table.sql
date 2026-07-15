@@ -17,25 +17,16 @@ CREATE TABLE IF NOT EXISTS "restaurant-manager".users (
     updated_at  TIMESTAMPTZ   NOT NULL DEFAULT NOW(),
 
     CONSTRAINT users_pkey         PRIMARY KEY (id),
-    CONSTRAINT fk_user_type FOREIGN KEY (type_id) REFERENCES user_types(id),
+    CONSTRAINT fk_user_type FOREIGN KEY (type_id) REFERENCES "restaurant-manager".user_types(id),
     CONSTRAINT users_uuid_unique UNIQUE (uuid),
     CONSTRAINT users_email_unique UNIQUE (email),
     CONSTRAINT users_login_unique UNIQUE (login)
 );
 
-INSERT INTO "restaurant-manager".users (
-    uuid,
-    name,
-    email,
-    type_id,
-    login,
-    active,
-) VALUES (
-    gen_random_uuid(),
-    'John Doe',
-    'john.doe@example.com',
-    1,
-    'john.doe',
-    TRUE,
-) ON CONFLICT DO NOTHING;
+
+INSERT INTO "restaurant-manager".users (name, email, type_id, login, active)
+VALUES
+    ('John Doe', 'john.doe@example.com', 1, 'john.doe', TRUE),
+    ('Jane Smith', 'jane.smith@example.com', 2, 'jane.smith', TRUE)
+ON CONFLICT (email) DO NOTHING;
 

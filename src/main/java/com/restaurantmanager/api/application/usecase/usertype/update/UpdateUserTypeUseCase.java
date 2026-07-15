@@ -29,7 +29,7 @@ public class UpdateUserTypeUseCase {
 				String.format("A user type with name '%s' already exists", userType.getName()));
 		}
 
-		final UserType updated = new UserType(id, userType.getName(), userType.getObservation());
+		final UserType updated = new UserType(id, userType.getName());
 
 		return userTypeGateway.save(updated);
 	}

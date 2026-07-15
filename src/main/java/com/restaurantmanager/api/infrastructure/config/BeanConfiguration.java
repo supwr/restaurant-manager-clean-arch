@@ -30,14 +30,10 @@ import com.restaurantmanager.api.application.usecase.usertype.update.UpdateUserT
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * Central bean configuration for application use cases. Each use case is exposed as a Spring @Bean so
- * infrastructure adapters (controllers, services, repositories) can inject them as needed.
- */
+
 @Configuration
 public class BeanConfiguration {
 
-    // --- User use cases -------------------------------------------------
     @Bean
     public CreateUserUseCase createUserUseCase(final UserGateway userGateway) {
         return new CreateUserUseCase(userGateway);
@@ -78,7 +74,6 @@ public class BeanConfiguration {
         return new UpdateUserByUuidUseCase(userGateway);
     }
 
-    // --- Restaurant use cases -------------------------------------------
     @Bean
     public CreateRestaurantUseCase createRestaurantUseCase(final RestaurantGateway restaurantGateway) {
         return new CreateRestaurantUseCase(restaurantGateway);
@@ -104,7 +99,6 @@ public class BeanConfiguration {
         return new DeleteRestaurantUseCase(restaurantGateway);
     }
 
-    // --- MenuItem use cases ---------------------------------------------
     @Bean
     public CreateMenuItemUseCase createMenuItemUseCase(final MenuItemGateway menuItemGateway, final RestaurantGateway restaurantGateway) {
         return new CreateMenuItemUseCase(menuItemGateway, restaurantGateway);
@@ -130,7 +124,6 @@ public class BeanConfiguration {
         return new UpdateMenuItemUseCase(menuItemGateway, restaurantGateway);
     }
 
-    // --- UserType use cases --------------------------------------------
     @Bean
     public CreateUserTypeUseCase createUserTypeUseCase(final UserTypeGateway userTypeGateway) {
         return new CreateUserTypeUseCase(userTypeGateway);

@@ -26,9 +26,6 @@ public class UserTypeEntity {
     @Column(nullable = false, unique = true, length = 100)
     private String name;
 
-    @Column(name = "observation", length = 500)
-    private String observation;
-
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -59,13 +56,6 @@ public class UserTypeEntity {
         this.name = name;
     }
 
-    public String getObservation() {
-        return observation;
-    }
-
-    public void setObservation(final String observation) {
-        this.observation = observation;
-    }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;

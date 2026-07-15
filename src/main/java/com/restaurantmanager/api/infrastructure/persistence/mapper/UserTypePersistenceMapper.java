@@ -13,7 +13,7 @@ public interface UserTypePersistenceMapper {
         if (entity == null) {
             return null;
         }
-        return new UserType(entity.getId(), entity.getUuid(), entity.getName(), entity.getObservation());
+        return new UserType(entity.getId(), entity.getUuid(), entity.getName());
     }
 
     default UserTypeEntity toEntity(final UserType domain) {
@@ -24,7 +24,6 @@ public interface UserTypePersistenceMapper {
         entity.setId(domain.getId());
         entity.setUuid(domain.getUuid());
         entity.setName(domain.getName());
-        entity.setObservation(domain.getObservation());
         return entity;
     }
 }

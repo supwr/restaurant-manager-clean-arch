@@ -9,20 +9,17 @@ public class UserType {
 	private final Long id;
 	private final UUID uuid;
 	private final String name;
-	private final String observation;
 
-	public UserType(final Long id, final String name, final String observation) {
+	public UserType(final Long id, final String name) {
 		this.id = id;
 		this.uuid = null;
 		this.name = name;
-		this.observation = observation;
 	}
 
-	public UserType(final Long id, final UUID uuid, final String name, final String observation) {
+	public UserType(final Long id, final UUID uuid, final String name) {
 		this.id = id;
 		this.uuid = uuid;
 		this.name = name;
-		this.observation = observation;
 	}
 
 	public Long getId() {
@@ -37,9 +34,6 @@ public class UserType {
 		return name;
 	}
 
-	public String getObservation() {
-		return observation;
-	}
 
 	public void validate() {
 		if (name == null || name.isBlank()) {

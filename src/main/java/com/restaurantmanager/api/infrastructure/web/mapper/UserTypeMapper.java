@@ -15,14 +15,14 @@ public interface UserTypeMapper {
         if (request == null) {
             return null;
         }
-        return new UserType(null, request.getName(), request.getObservation());
+        return new UserType(null, request.getName());
     }
 
     default UserType map(final Long id, final UserTypeRequest request) {
         if (request == null) {
             return null;
         }
-        return new UserType(id, request.getName(), request.getObservation());
+        return new UserType(id, request.getName());
     }
 }
 

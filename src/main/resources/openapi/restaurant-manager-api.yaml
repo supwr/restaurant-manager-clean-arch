@@ -524,9 +524,6 @@ components:
         name:
           type: string
           example: OWNER
-        observation:
-          type: string
-          example: Staff and restaurant owner roles
       required: [ name ]
     UserTypeResponse:
       type: object
@@ -540,9 +537,6 @@ components:
         name:
           type: string
           example: OWNER
-        observation:
-          type: string
-          example: Staff and restaurant owner roles
     RestaurantRequest:
       type: object
       properties:
