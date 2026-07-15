@@ -24,7 +24,7 @@ import static org.hamcrest.Matchers.*;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("it")
-class MenuItemControllerIT {
+class MenuItemControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;

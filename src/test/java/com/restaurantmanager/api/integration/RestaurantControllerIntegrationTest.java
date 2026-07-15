@@ -22,7 +22,7 @@ import static org.hamcrest.Matchers.*;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("it")
-class RestaurantControllerIT {
+class RestaurantControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;

@@ -21,7 +21,7 @@ import static org.hamcrest.Matchers.*;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("it")
-class UserTypeControllerIT {
+class UserTypeControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
