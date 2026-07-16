@@ -40,6 +40,11 @@ public class MenuItemPersistenceGateway implements MenuItemGateway {
     }
 
     @Override
+    public Optional<MenuItem> findByUuidAndRestaurantUuid(final UUID menuItemUuid, final UUID restaurantUuid) {
+        return repository.findByUuidAndRestaurantUuid(menuItemUuid, restaurantUuid).map(mapper::toDomain);
+    }
+
+    @Override
     public List<MenuItem> findByRestaurantId(final Long restaurantId) {
         return repository.findByRestaurantId(restaurantId).stream().map(mapper::toDomain).toList();
     }

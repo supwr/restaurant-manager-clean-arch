@@ -12,11 +12,6 @@ import com.restaurantmanager.api.application.usecase.user.delete.DeleteUserUseCa
 import com.restaurantmanager.api.infrastructure.web.mapper.UserMapper;
 import com.restaurantmanager.api.domain.model.Pagination;
 import com.restaurantmanager.api.domain.model.User;
-import com.restaurantmanager.api.domain.model.Address;
-import com.restaurantmanager.api.domain.model.Owner;
-import com.restaurantmanager.api.domain.model.Customer;
-import com.restaurantmanager.api.application.gateway.UserTypeGateway;
-import com.restaurantmanager.api.domain.exception.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +30,6 @@ public class UserController implements UsersApi {
     private final UpdateUserUseCase updateUserByUuidUseCase;
     private final DeleteUserUseCase deleteUserByUuidUseCase;
     private final UserMapper userMapper;
-    private final UserTypeGateway userTypeGateway;
 
     public UserController(
             final CreateUserUseCase createUserUseCase,
@@ -43,8 +37,7 @@ public class UserController implements UsersApi {
             final ListUserCase listUserCase,
             final UpdateUserUseCase updateUserByUuidUseCase,
             final DeleteUserUseCase deleteUserByUuidUseCase,
-            final UserMapper userMapper,
-            final UserTypeGateway userTypeGateway
+            final UserMapper userMapper
     ) {
         this.createUserUseCase = Objects.requireNonNull(createUserUseCase);
         this.getUserByUuidUseCase = Objects.requireNonNull(getUserByUuidUseCase);
@@ -52,15 +45,23 @@ public class UserController implements UsersApi {
         this.updateUserByUuidUseCase = Objects.requireNonNull(updateUserByUuidUseCase);
         this.deleteUserByUuidUseCase = Objects.requireNonNull(deleteUserByUuidUseCase);
         this.userMapper = Objects.requireNonNull(userMapper);
-        this.userTypeGateway = Objects.requireNonNull(userTypeGateway);
     }
 
     @Override
     public ResponseEntity<UserResponse> createUser(@Valid CreateUserRequest createUserRequest) {
-        final User user = toDomain(createUserRequest);
+        final User user = new User(
+            null,
+            null,
+            createUserRequest.getName(),
+            createUserRequest.getEmail(),
+            createUserRequest.getLogin(),
+            true,
+            null,
+            null
+        );
 
         final User created = createUserUseCase.execute(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(created));
+        return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.map(created));
     }
 
     @Override
@@ -72,20 +73,20 @@ public class UserController implements UsersApi {
     @Override
     public ResponseEntity<UserResponse> getUserById(UUID userId) {
         final User user = getUserByUuidUseCase.execute(userId);
-        return ResponseEntity.ok(toResponse(user));
+        return ResponseEntity.ok(userMapper.map(user));
     }
 
     @Override
     public ResponseEntity<List<UserResponse>> listUsers(String name, Integer page, Integer size) {
         final var pagination = new Pagination(page, size, "name");
         final var pageResult = listUserCase.execute(pagination);
-        final List<UserResponse> content = pageResult.getContent().stream().map(this::toResponse).toList();
+        final List<UserResponse> content = pageResult.getContent().stream().map(userMapper::map).toList();
         return ResponseEntity.ok(content);
     }
 
     @Override
     public ResponseEntity<UserResponse> updateUser(UUID userId, @Valid UpdateUserRequest updateUserRequest) {
-        final User user = new MutableUser(
+        final User user = new User(
             null,
             null,
             updateUserRequest.getName(),
@@ -93,60 +94,11 @@ public class UserController implements UsersApi {
             null,
             null,
             null,
-            null,
-            null,
             null
         );
 
         final User updated = updateUserByUuidUseCase.execute(userId, user);
-        return ResponseEntity.ok(toResponse(updated));
-    }
-
-    private UserResponse toResponse(final User user) {
-        return userMapper.map(user, resolveType(user));
-    }
-
-    private com.restaurantmanager.api.model.UserType resolveType(final User user) {
-        final String typeName = switch (user.getClass().getSimpleName()) {
-            case "Owner" -> User.OWNER_TYPE;
-            case "Customer" -> User.CUSTOMER_TYPE;
-            default -> throw new IllegalArgumentException("Unsupported user subtype: " + user.getClass().getName());
-        };
-
-        final com.restaurantmanager.api.domain.model.UserType userType = userTypeGateway.findByName(typeName)
-            .orElseThrow(() -> new EntityNotFoundException("UserType", typeName));
-
-        final com.restaurantmanager.api.model.UserType responseType = new com.restaurantmanager.api.model.UserType();
-        responseType.setUuid(userType.getUuid());
-        responseType.setName(userType.getName());
-        return responseType;
-    }
-
-    private User toDomain(final CreateUserRequest request) {
-        final String typeName = request.getType() == null ? null : request.getType().getName();
-        final User user = User.CUSTOMER_TYPE.equalsIgnoreCase(typeName)
-            ? Customer.create(null, null, request.getName(), request.getEmail(), request.getLogin(), true, null, null, null, null)
-            : Owner.create(null, null, request.getName(), request.getEmail(), request.getLogin(), true, null, null, null, null);
-
-        return user;
-    }
-
-
-    private static final class MutableUser extends User {
-        private MutableUser(
-            final Long id,
-            final java.util.UUID uuid,
-            final String name,
-            final String email,
-            final String login,
-            final Boolean active,
-            final String password,
-            final Address address,
-            final java.time.Instant createdAt,
-            final java.time.Instant updatedAt
-        ) {
-            super(id, uuid, name, email, login, active, password, address, createdAt, updatedAt);
-        }
+        return ResponseEntity.ok(userMapper.map(updated));
     }
 }
 

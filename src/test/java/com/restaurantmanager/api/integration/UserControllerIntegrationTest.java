@@ -70,13 +70,11 @@ class UserControllerIntegrationTest {
 
     @Test
     void testListUsers_Success() throws Exception {
-        // Create a user first
         mockMvc.perform(post("/api/v1/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(validRequest)))
                 .andExpect(status().isCreated());
 
-        // List users
         mockMvc.perform(get("/api/v1/users")
                 .param("page", "0")
                 .param("size", "20"))
@@ -88,7 +86,6 @@ class UserControllerIntegrationTest {
 
     @Test
     void testGetUserById_Success() throws Exception {
-        // Create a user first
         MvcResult createResult = mockMvc.perform(post("/api/v1/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(validRequest)))
@@ -98,7 +95,6 @@ class UserControllerIntegrationTest {
         String responseBody = createResult.getResponse().getContentAsString();
         String uuid = extractUuidFromJson(responseBody);
 
-        // Get user by uuid
         mockMvc.perform(get("/api/v1/users/{uuid}", uuid))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", equalTo(validRequest.getName())))
@@ -110,7 +106,6 @@ class UserControllerIntegrationTest {
 
     @Test
     void testUpdateUser_Success() throws Exception {
-        // Create a user first
         MvcResult createResult = mockMvc.perform(post("/api/v1/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(validRequest)))
@@ -120,7 +115,6 @@ class UserControllerIntegrationTest {
         String responseBody = createResult.getResponse().getContentAsString();
         String uuid = extractUuidFromJson(responseBody);
 
-        // Update user
         UpdateUserRequest updateRequest = new UpdateUserRequest();
         updateRequest.setName("Updated User");
         updateRequest.setEmail("updated@example.com");
@@ -135,7 +129,6 @@ class UserControllerIntegrationTest {
 
     @Test
     void testDeleteUser_Success() throws Exception {
-        // Create a user first
         MvcResult createResult = mockMvc.perform(post("/api/v1/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(validRequest)))
@@ -145,11 +138,9 @@ class UserControllerIntegrationTest {
         String responseBody = createResult.getResponse().getContentAsString();
         String uuid = extractUuidFromJson(responseBody);
 
-        // Delete user
         mockMvc.perform(delete("/api/v1/users/{uuid}", uuid))
                 .andExpect(status().isNoContent());
 
-        // Verify it's deleted
         mockMvc.perform(get("/api/v1/users/{uuid}", uuid))
                 .andExpect(status().isNotFound());
     }

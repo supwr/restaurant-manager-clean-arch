@@ -1,7 +1,6 @@
 package com.restaurantmanager.api.infrastructure.web.mapper;
 
 import com.restaurantmanager.api.model.UserResponse;
-import com.restaurantmanager.api.domain.model.Address;
 import com.restaurantmanager.api.domain.model.User;
 
 import com.restaurantmanager.api.model.UserType;
@@ -17,43 +16,17 @@ public interface UserMapper {
     @Mapping(target = "login", source = "login")
     @Mapping(target = "createdAt", expression = "java(user.getCreatedAt() == null ? null : java.time.OffsetDateTime.ofInstant(user.getCreatedAt(), java.time.ZoneOffset.UTC))")
     @Mapping(target = "lastModifiedAt", expression = "java(user.getUpdatedAt() == null ? null : java.time.OffsetDateTime.ofInstant(user.getUpdatedAt(), java.time.ZoneOffset.UTC))")
-    @Mapping(target = "type", expression = "java(resolveType(user))")
+    @Mapping(target = "type", expression = "java(mapUserType(user.getUserType()))")
     UserResponse map(User user);
 
-    @Mapping(target = "uuid", source = "user.uuid")
-    @Mapping(target = "name", source = "user.name")
-    @Mapping(target = "email", source = "user.email")
-    @Mapping(target = "login", source = "user.login")
-    @Mapping(target = "createdAt", expression = "java(user.getCreatedAt() == null ? null : java.time.OffsetDateTime.ofInstant(user.getCreatedAt(), java.time.ZoneOffset.UTC))")
-    @Mapping(target = "lastModifiedAt", expression = "java(user.getUpdatedAt() == null ? null : java.time.OffsetDateTime.ofInstant(user.getUpdatedAt(), java.time.ZoneOffset.UTC))")
-    @Mapping(target = "type", source = "type")
-    UserResponse map(User user, UserType type);
 
-    default UserType resolveType(final User user) {
-        if (user == null) {
+    default UserType mapUserType(final com.restaurantmanager.api.domain.model.UserType domainType) {
+        if (domainType == null) {
             return null;
         }
-
-        com.restaurantmanager.api.model.UserType result = new com.restaurantmanager.api.model.UserType();
-        final String simpleName = user.getClass().getSimpleName();
-        switch (simpleName) {
-            case "Owner" -> result.setName(User.OWNER_TYPE);
-            case "Customer" -> result.setName(User.CUSTOMER_TYPE);
-            default -> throw new IllegalArgumentException("Unsupported user subtype: " + user.getClass().getName());
-        }
-
-        return result;
-    }
-
-    default com.restaurantmanager.api.model.Address map(final Address address) {
-        if (address == null) {
-            return null;
-        }
-        return new com.restaurantmanager.api.model.Address(
-                address.street(),
-                address.number() == null ? null : String.valueOf(address.number()),
-                address.city(),
-                address.zipCode()
-        );
+        final UserType responseType = new UserType();
+        responseType.setUuid(domainType.getUuid());
+        responseType.setName(domainType.getName() != null ? domainType.getName().toUpperCase() : null);
+        return responseType;
     }
 }

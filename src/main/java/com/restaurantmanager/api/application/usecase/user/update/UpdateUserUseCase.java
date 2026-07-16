@@ -35,15 +35,14 @@ public class UpdateUserUseCase {
 			throw new ValidationException("login", user.getLogin(), "Login already exists");
 		}
 
-		final User updated = new MutableUser(
+		final User updated = new User(
 			existing.getId(),
 			existing.getUuid(),
 			user.getName() != null ? user.getName() : existing.getName(),
 			user.getEmail() != null ? user.getEmail() : existing.getEmail(),
 			user.getLogin() != null ? user.getLogin() : existing.getLogin(),
 			existing.getActive(),
-			existing.getPassword(),
-			user.getAddress() != null ? user.getAddress() : existing.getAddress(),
+			existing.getUserType(),
 			existing.getCreatedAt(),
 			existing.getUpdatedAt()
 		);
@@ -60,23 +59,6 @@ public class UpdateUserUseCase {
 		}
 		if (user.getLogin() != null && user.getLogin().isBlank()) {
 			throw new ValidationException("login", user.getLogin(), "User login must not be blank");
-		}
-	}
-
-	private static final class MutableUser extends User {
-		private MutableUser(
-			final Long id,
-			final java.util.UUID uuid,
-			final String name,
-			final String email,
-			final String login,
-			final Boolean active,
-			final String password,
-			final com.restaurantmanager.api.domain.model.Address address,
-			final java.time.Instant createdAt,
-			final java.time.Instant updatedAt
-		) {
-			super(id, uuid, name, email, login, active, password, address, createdAt, updatedAt);
 		}
 	}
 }

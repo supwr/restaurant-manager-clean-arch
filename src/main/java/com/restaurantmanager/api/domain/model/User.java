@@ -5,31 +5,41 @@ import java.util.UUID;
 
 public class User {
 
-    public static final String OWNER_TYPE = "OWNER";
-    public static final String CUSTOMER_TYPE = "CUSTOMER";
+    private Long id;
+    private UUID uuid;
+    private String name;
+    private String email;
+    private String login;
+    private Boolean active;
+    private UserType userType;
+    private Instant createdAt;
+    private Instant updatedAt;
 
-    protected Long id;
-    protected UUID uuid;
-    protected String name;
-    protected String email;
-    protected String login;
-    protected Boolean active;
-    protected String password;
-    protected Address address;
-    protected Instant createdAt;
-    protected Instant updatedAt;
+    public User() {
+    }
 
-    protected User(final Long id, final UUID uuid, final String name, final String email, final String login, final Boolean active, final String password, final Address address, final Instant createdAt, final Instant updatedAt) {
+    public User(final Long id, final UUID uuid, final String name, final String email, final String login, final Boolean active, final Instant createdAt, final Instant updatedAt) {
+        this(id, uuid, name, email, login, active, null, createdAt, updatedAt);
+    }
+
+    public User(final Long id, final UUID uuid, final String name, final String email, final String login, final Boolean active, final UserType userType, final Instant createdAt, final Instant updatedAt) {
         this.id = id;
         this.uuid = uuid;
         this.name = name;
         this.email = email;
         this.login = login;
         this.active = active;
-        this.password = password;
-        this.address = address;
+        this.userType = userType;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+    }
+
+    public static User create(final Long id, final UUID uuid, final String name, final String email, final String login, final Boolean active, final Instant createdAt, final Instant updatedAt) {
+        return new User(id, uuid, name, email, login, active, null, createdAt, updatedAt);
+    }
+
+    public static User createWithType(final Long id, final UUID uuid, final String name, final String email, final String login, final Boolean active, final UserType userType, final Instant createdAt, final Instant updatedAt) {
+        return new User(id, uuid, name, email, login, active, userType, createdAt, updatedAt);
     }
 
     public Long getId() {
@@ -48,10 +58,6 @@ public class User {
         return active;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
     public Instant getCreatedAt() {
         return createdAt;
     }
@@ -68,7 +74,44 @@ public class User {
         return email;
     }
 
-    public Address getAddress() {
-        return address;
+    public UserType getUserType() {
+        return userType;
+    }
+
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    public void setUuid(final UUID uuid) {
+        this.uuid = uuid;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public void setEmail(final String email) {
+        this.email = email;
+    }
+
+    public void setLogin(final String login) {
+        this.login = login;
+    }
+
+    public void setActive(final Boolean active) {
+        this.active = active;
+    }
+
+
+    public void setUserType(final UserType userType) {
+        this.userType = userType;
+    }
+
+    public void setCreatedAt(final Instant createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setUpdatedAt(final Instant updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

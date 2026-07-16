@@ -47,7 +47,6 @@ class MenuItemControllerIntegrationTest {
 
         final UUID ownerUserUuid = createOwnerUserUuid();
 
-        // Create a restaurant first
         RestaurantRequest restaurantRequest = new RestaurantRequest();
         restaurantRequest.setName("Test Restaurant " + UUID.randomUUID());
         restaurantRequest.setAddress("123 Main St");
@@ -88,7 +87,6 @@ class MenuItemControllerIntegrationTest {
 
     @Test
     void testListMenuItems_Success() throws Exception {
-        // Create a menu item first
         MenuItemRequest request = new MenuItemRequest();
         request.setName("Pizza");
         request.setDescription("Delicious pizza");
@@ -101,7 +99,6 @@ class MenuItemControllerIntegrationTest {
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated());
 
-        // List menu items
         mockMvc.perform(get("/api/v1/restaurants/{restaurantUuid}/menu-items", restaurantUuid)
                 .param("page", "0")
                 .param("size", "20"))
@@ -115,7 +112,6 @@ class MenuItemControllerIntegrationTest {
 
     @Test
     void testGetMenuItemByUuid_Success() throws Exception {
-        // Create a menu item first
         MenuItemRequest request = new MenuItemRequest();
         request.setName("Burger");
         request.setDescription("Tasty burger");
@@ -132,7 +128,6 @@ class MenuItemControllerIntegrationTest {
         String responseBody = createResult.getResponse().getContentAsString();
         String menuItemUuid = extractUuidFromJson(responseBody);
 
-        // Get menu item by uuid
         mockMvc.perform(get("/api/v1/restaurants/{restaurantUuid}/menu-items/{menuItemUuid}", restaurantUuid, menuItemUuid))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", equalTo("Burger")))
@@ -143,7 +138,6 @@ class MenuItemControllerIntegrationTest {
 
     @Test
     void testUpdateMenuItem_Success() throws Exception {
-        // Create a menu item first
         MenuItemRequest request = new MenuItemRequest();
         request.setName("Salad");
         request.setDescription("Fresh salad");
@@ -160,7 +154,6 @@ class MenuItemControllerIntegrationTest {
         String responseBody = createResult.getResponse().getContentAsString();
         String menuItemUuid = extractUuidFromJson(responseBody);
 
-        // Update menu item
         MenuItemRequest updateRequest = new MenuItemRequest();
         updateRequest.setName("Updated Salad");
         updateRequest.setDescription("Updated fresh salad");
@@ -171,13 +164,15 @@ class MenuItemControllerIntegrationTest {
         mockMvc.perform(put("/api/v1/restaurants/{restaurantUuid}/menu-items/{menuItemUuid}", restaurantUuid, menuItemUuid)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updateRequest)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.field", equalTo("restaurantId")));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name", equalTo("Updated Salad")))
+                .andExpect(jsonPath("$.uuid", equalTo(menuItemUuid)))
+                .andExpect(jsonPath("$.restaurant.id").exists())
+                .andExpect(jsonPath("$.restaurant.name").exists());
     }
 
     @Test
     void testDeleteMenuItem_Success() throws Exception {
-        // Create a menu item first
         MenuItemRequest request = new MenuItemRequest();
         request.setName("Dessert");
         request.setDescription("Sweet dessert");
@@ -194,11 +189,9 @@ class MenuItemControllerIntegrationTest {
         String responseBody = createResult.getResponse().getContentAsString();
         String menuItemUuid = extractUuidFromJson(responseBody);
 
-        // Delete menu item
         mockMvc.perform(delete("/api/v1/restaurants/{restaurantUuid}/menu-items/{menuItemUuid}", restaurantUuid, menuItemUuid))
                 .andExpect(status().isNoContent());
 
-        // Verify it's deleted
         mockMvc.perform(get("/api/v1/restaurants/{restaurantUuid}/menu-items/{menuItemUuid}", restaurantUuid, menuItemUuid))
                 .andExpect(status().isNotFound());
     }

@@ -1,13 +1,11 @@
 package com.restaurantmanager.api.unit.infrastructure.web.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.restaurantmanager.api.application.gateway.UserTypeGateway;
 import com.restaurantmanager.api.application.usecase.user.create.CreateUserUseCase;
 import com.restaurantmanager.api.application.usecase.user.delete.DeleteUserUseCase;
 import com.restaurantmanager.api.application.usecase.user.get.GetUserUseCase;
 import com.restaurantmanager.api.application.usecase.user.list.ListUserCase;
 import com.restaurantmanager.api.application.usecase.user.update.UpdateUserUseCase;
-import com.restaurantmanager.api.domain.model.Owner;
 import com.restaurantmanager.api.domain.model.Pagination;
 import com.restaurantmanager.api.domain.model.PageResult;
 import com.restaurantmanager.api.domain.model.User;
@@ -29,7 +27,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -48,7 +45,6 @@ class UserControllerUnitTest {
     @Mock private UpdateUserUseCase updateUserByUuidUseCase;
     @Mock private DeleteUserUseCase deleteUserByUuidUseCase;
     @Mock private UserMapper userMapper;
-    @Mock private UserTypeGateway userTypeGateway;
 
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
@@ -56,7 +52,7 @@ class UserControllerUnitTest {
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(new UserController(
-            createUserUseCase, getUserByUuidUseCase, listUserCase, updateUserByUuidUseCase, deleteUserByUuidUseCase, userMapper, userTypeGateway
+            createUserUseCase, getUserByUuidUseCase, listUserCase, updateUserByUuidUseCase, deleteUserByUuidUseCase, userMapper
         )).setControllerAdvice(new GlobalExceptionHandler()).build();
         objectMapper = new ObjectMapper();
     }
@@ -64,7 +60,8 @@ class UserControllerUnitTest {
     @Test
     void testCreateUser_Success() throws Exception {
         UUID uuid = UUID.randomUUID();
-        User user = Owner.create(1L, uuid, "John Doe", "john@example.com", "john", true, null, null, Instant.now(), Instant.now());
+        com.restaurantmanager.api.domain.model.UserType domainType = new com.restaurantmanager.api.domain.model.UserType(1L, UUID.randomUUID(), "OWNER");
+        User user = new User(1L, uuid, "John Doe", "john@example.com", "john", true, domainType, Instant.now(), Instant.now());
         UserResponse response = new UserResponse();
         response.setUuid(uuid);
         response.setName("John Doe");
@@ -75,11 +72,8 @@ class UserControllerUnitTest {
         type.setName("OWNER");
         response.setType(type);
 
-        com.restaurantmanager.api.domain.model.UserType domainType = new com.restaurantmanager.api.domain.model.UserType(1L, typeUuid, "OWNER");
-        when(userTypeGateway.findByName("OWNER")).thenReturn(Optional.of(domainType));
-
         when(createUserUseCase.execute(any(User.class))).thenReturn(user);
-        when(userMapper.map(eq(user), any(UserType.class))).thenReturn(response);
+        when(userMapper.map(user)).thenReturn(response);
 
         CreateUserRequest request = new CreateUserRequest();
         request.setName("John Doe");
@@ -104,7 +98,8 @@ class UserControllerUnitTest {
     @Test
     void testGetUserByUuid_Success() throws Exception {
         UUID uuid = UUID.randomUUID();
-        User user = Owner.create(1L, uuid, "John Doe", "john@example.com", "john", true, null, null, Instant.now(), Instant.now());
+        com.restaurantmanager.api.domain.model.UserType domainType = new com.restaurantmanager.api.domain.model.UserType(1L, UUID.randomUUID(), "OWNER");
+        User user = new User(1L, uuid, "John Doe", "john@example.com", "john", true, domainType, Instant.now(), Instant.now());
         UserResponse response = new UserResponse();
         response.setUuid(uuid);
         response.setName("John Doe");
@@ -113,10 +108,9 @@ class UserControllerUnitTest {
         type.setUuid(UUID.randomUUID());
         type.setName("OWNER");
         response.setType(type);
-        when(userTypeGateway.findByName("OWNER")).thenReturn(Optional.of(new com.restaurantmanager.api.domain.model.UserType(1L, type.getUuid(), "OWNER")));
 
         when(getUserByUuidUseCase.execute(uuid)).thenReturn(user);
-        when(userMapper.map(eq(user), any(UserType.class))).thenReturn(response);
+        when(userMapper.map(user)).thenReturn(response);
 
         mockMvc.perform(get("/api/v1/users/{uuid}", uuid))
             .andExpect(status().isOk())
@@ -126,7 +120,8 @@ class UserControllerUnitTest {
     @Test
     void testListUsers_Success() throws Exception {
         UUID uuid = UUID.randomUUID();
-        User user = Owner.create(1L, uuid, "John Doe", "john@example.com", "john", true, null, null, Instant.now(), Instant.now());
+        com.restaurantmanager.api.domain.model.UserType domainType = new com.restaurantmanager.api.domain.model.UserType(1L, UUID.randomUUID(), "OWNER");
+        User user = new User(1L, uuid, "John Doe", "john@example.com", "john", true, domainType, Instant.now(), Instant.now());
         UserResponse response = new UserResponse();
         response.setUuid(uuid);
         response.setName("John Doe");
@@ -134,10 +129,9 @@ class UserControllerUnitTest {
         type.setUuid(UUID.randomUUID());
         type.setName("OWNER");
         response.setType(type);
-        when(userTypeGateway.findByName("OWNER")).thenReturn(Optional.of(new com.restaurantmanager.api.domain.model.UserType(1L, type.getUuid(), "OWNER")));
 
         when(listUserCase.execute(any(Pagination.class))).thenReturn(new PageResult<>(List.of(user), 0, 20, 1L, 1));
-        when(userMapper.map(eq(user), any(UserType.class))).thenReturn(response);
+        when(userMapper.map(user)).thenReturn(response);
 
         mockMvc.perform(get("/api/v1/users"))
             .andExpect(status().isOk())

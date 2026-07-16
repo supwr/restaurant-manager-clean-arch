@@ -69,14 +69,12 @@ class RestaurantControllerIntegrationTest {
 
     @Test
     void testListRestaurants_Success() throws Exception {
-        // Create a restaurant first
         mockMvc.perform(post("/api/v1/restaurants")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(validRequest)))
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        // List restaurants
         mockMvc.perform(get("/api/v1/restaurants")
                 .param("page", "0")
                 .param("size", "20"))
@@ -90,7 +88,6 @@ class RestaurantControllerIntegrationTest {
 
     @Test
     void testGetRestaurantByUuid_Success() throws Exception {
-        // Create a restaurant first
         MvcResult createResult = mockMvc.perform(post("/api/v1/restaurants")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(validRequest)))
@@ -100,7 +97,6 @@ class RestaurantControllerIntegrationTest {
         String responseBody = createResult.getResponse().getContentAsString();
         String uuid = extractUuidFromJson(responseBody);
 
-        // Get restaurant by uuid
         mockMvc.perform(get("/api/v1/restaurants/{uuid}", uuid))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", equalTo(validRequest.getName())))
@@ -112,7 +108,6 @@ class RestaurantControllerIntegrationTest {
 
     @Test
     void testUpdateRestaurant_Success() throws Exception {
-        // Create a restaurant first
         MvcResult createResult = mockMvc.perform(post("/api/v1/restaurants")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(validRequest)))
@@ -122,7 +117,6 @@ class RestaurantControllerIntegrationTest {
         String responseBody = createResult.getResponse().getContentAsString();
         String uuid = extractUuidFromJson(responseBody);
 
-        // Update restaurant
         RestaurantRequest updateRequest = new RestaurantRequest();
         updateRequest.setName("Updated Restaurant");
         updateRequest.setAddress("456 Oak Ave");
@@ -142,7 +136,6 @@ class RestaurantControllerIntegrationTest {
 
     @Test
     void testDeleteRestaurant_Success() throws Exception {
-        // Create a restaurant first
         MvcResult createResult = mockMvc.perform(post("/api/v1/restaurants")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(validRequest)))
@@ -152,11 +145,9 @@ class RestaurantControllerIntegrationTest {
         String responseBody = createResult.getResponse().getContentAsString();
         String uuid = extractUuidFromJson(responseBody);
 
-        // Delete restaurant
         mockMvc.perform(delete("/api/v1/restaurants/{uuid}", uuid))
                 .andExpect(status().isNoContent());
 
-        // Verify it's deleted
         mockMvc.perform(get("/api/v1/restaurants/{uuid}", uuid))
                 .andExpect(status().isNotFound());
     }

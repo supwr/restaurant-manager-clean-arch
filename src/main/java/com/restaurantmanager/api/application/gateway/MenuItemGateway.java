@@ -14,6 +14,8 @@ public interface MenuItemGateway {
 
     Optional<MenuItem> findByUuid(UUID uuid);
 
+    Optional<MenuItem> findByUuidAndRestaurantUuid(UUID menuItemUuid, UUID restaurantUuid);
+
     List<MenuItem> findByRestaurantId(Long restaurantId);
 
     void deleteById(Long id);

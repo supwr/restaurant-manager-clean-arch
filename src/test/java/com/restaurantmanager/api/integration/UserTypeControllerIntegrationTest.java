@@ -63,7 +63,6 @@ class UserTypeControllerIntegrationTest {
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated());
 
-        // List user types
         mockMvc.perform(get("/api/v1/user-types"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(1))))
@@ -73,7 +72,6 @@ class UserTypeControllerIntegrationTest {
 
     @Test
     void testGetUserTypeByUuid_Success() throws Exception {
-        // Create a user type first
         UserTypeRequest request = new UserTypeRequest();
         request.setName("User");
         request.observation("Regular user role");
@@ -87,7 +85,6 @@ class UserTypeControllerIntegrationTest {
         String responseBody = createResult.getResponse().getContentAsString();
         String uuid = extractUuidFromJson(responseBody);
 
-        // Get user type by uuid
         mockMvc.perform(get("/api/v1/user-types/{userTypeUuid}", uuid))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", equalTo("User")))
@@ -96,7 +93,6 @@ class UserTypeControllerIntegrationTest {
 
     @Test
     void testUpdateUserType_Success() throws Exception {
-        // Create a user type first
         UserTypeRequest request = new UserTypeRequest();
         request.setName("Guest");
         request.observation("Guest role");
@@ -110,7 +106,6 @@ class UserTypeControllerIntegrationTest {
         String responseBody = createResult.getResponse().getContentAsString();
         String uuid = extractUuidFromJson(responseBody);
 
-        // Update user type
         UserTypeRequest updateRequest = new UserTypeRequest();
         updateRequest.setName("Premium Guest");
         updateRequest.observation("Premium guest role with special privileges");
@@ -125,7 +120,6 @@ class UserTypeControllerIntegrationTest {
 
     @Test
     void testDeleteUserType_Success() throws Exception {
-        // Create a user type first
         UserTypeRequest request = new UserTypeRequest();
         request.setName("Temp User");
         request.observation("Temporary user role");
@@ -139,11 +133,9 @@ class UserTypeControllerIntegrationTest {
         String responseBody = createResult.getResponse().getContentAsString();
         String uuid = extractUuidFromJson(responseBody);
 
-        // Delete user type
         mockMvc.perform(delete("/api/v1/user-types/{userTypeUuid}", uuid))
                 .andExpect(status().isNoContent());
 
-        // Verify it's deleted
         mockMvc.perform(get("/api/v1/user-types/{userTypeUuid}", uuid))
                 .andExpect(status().isNotFound());
     }

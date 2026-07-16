@@ -112,13 +112,13 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public DeleteMenuItemUseCase deleteMenuItemUseCase(final MenuItemGateway menuItemGateway, final RestaurantGateway restaurantGateway) {
-        return new DeleteMenuItemUseCase(menuItemGateway, restaurantGateway);
+    public DeleteMenuItemUseCase deleteMenuItemUseCase(final MenuItemGateway menuItemGateway) {
+        return new DeleteMenuItemUseCase(menuItemGateway);
     }
 
     @Bean
-    public UpdateMenuItemUseCase updateMenuItemUseCase(final MenuItemGateway menuItemGateway, final RestaurantGateway restaurantGateway) {
-        return new UpdateMenuItemUseCase(menuItemGateway, restaurantGateway);
+    public UpdateMenuItemUseCase updateMenuItemUseCase(final MenuItemGateway menuItemGateway) {
+        return new UpdateMenuItemUseCase(menuItemGateway);
     }
 
     @Bean

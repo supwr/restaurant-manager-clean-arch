@@ -15,6 +15,9 @@ public interface MenuItemRepository extends JpaRepository<MenuItemEntity, Long> 
     @Query("select m from MenuItemEntity m where m.restaurant.id = :restaurantId")
     List<MenuItemEntity> findByRestaurantId(Long restaurantId);
 
+    @Query("select m from MenuItemEntity m where m.uuid = :menuItemUuid and m.restaurant.uuid = :restaurantUuid")
+    Optional<MenuItemEntity> findByUuidAndRestaurantUuid(UUID menuItemUuid, UUID restaurantUuid);
+
     Optional<MenuItemEntity> findByUuid(UUID uuid);
 
     boolean existsByUuid(UUID uuid);
