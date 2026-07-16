@@ -32,7 +32,7 @@ class GetUserTypeUseCaseTest {
 
     @Test
     void testExecute_Success() {
-        UserType userType = new UserType(1L, UUID.randomUUID(), "ADMIN", "Administrator");
+        UserType userType = new UserType(1L, UUID.randomUUID(), "ADMIN");
         when(userTypeGateway.findById(1L)).thenReturn(Optional.of(userType));
 
         UserType result = useCase.execute(1L);

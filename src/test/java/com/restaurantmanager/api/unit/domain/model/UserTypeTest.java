@@ -12,18 +12,17 @@ class UserTypeTest {
 
     @Test
     void testCreateUserType_Success() {
-        UserType userType = new UserType(1L, "ADMIN", "Administrator user");
+        UserType userType = new UserType(1L, "ADMIN");
 
         assertNotNull(userType);
         assertEquals(1L, userType.getId());
         assertEquals("ADMIN", userType.getName());
-        assertEquals("Administrator user", userType.getObservation());
     }
 
     @Test
     void testCreateUserType_WithUuid() {
         UUID uuid = UUID.randomUUID();
-        UserType userType = new UserType(1L, uuid, "ADMIN", "Administrator user");
+        UserType userType = new UserType(1L, uuid, "ADMIN");
 
         assertNotNull(userType);
         assertEquals(uuid, userType.getUuid());
@@ -32,23 +31,22 @@ class UserTypeTest {
 
     @Test
     void testCreateUserType_WithoutObservation() {
-        UserType userType = new UserType(1L, "CUSTOMER", null);
+        UserType userType = new UserType(1L, "CUSTOMER");
 
         assertNotNull(userType);
         assertEquals("CUSTOMER", userType.getName());
-        assertNull(userType.getObservation());
     }
 
     @Test
     void testUserTypeValidate_Success() {
-        UserType userType = new UserType(1L, "ADMIN", "Administrator");
+        UserType userType = new UserType(1L, "ADMIN");
 
         assertDoesNotThrow(userType::validate);
     }
 
     @Test
     void testUserTypeValidate_BlankName() {
-        UserType userType = new UserType(1L, "   ", "Administrator");
+        UserType userType = new UserType(1L, "   ");
 
         ValidationException exception = assertThrows(ValidationException.class, userType::validate);
         assertEquals("name", exception.getField());

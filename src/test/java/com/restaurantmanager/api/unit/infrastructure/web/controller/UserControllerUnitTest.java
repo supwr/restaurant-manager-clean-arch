@@ -72,15 +72,15 @@ class UserControllerUnitTest {
         type.setName("OWNER");
         response.setType(type);
 
-        when(createUserUseCase.execute(any(User.class))).thenReturn(user);
+        when(createUserUseCase.execute(any(java.util.UUID.class), any(User.class))).thenReturn(user);
         when(userMapper.map(user)).thenReturn(response);
 
         CreateUserRequest request = new CreateUserRequest();
         request.setName("John Doe");
         request.setEmail("john@example.com");
         request.setLogin("john");
-        UserType requestType = new UserType();
-        requestType.setName("OWNER");
+        com.restaurantmanager.api.model.UserTypeRef requestType = new com.restaurantmanager.api.model.UserTypeRef();
+        requestType.setId(UUID.randomUUID());
         request.setType(requestType);
 
         mockMvc.perform(post("/api/v1/users")
@@ -90,9 +90,10 @@ class UserControllerUnitTest {
             .andExpect(jsonPath("$.name").value("John Doe"))
             .andExpect(jsonPath("$.uuid").exists());
 
-        ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
-        verify(createUserUseCase).execute(captor.capture());
-        assertEquals("John Doe", captor.getValue().getName());
+        ArgumentCaptor<java.util.UUID> uuidCaptor = ArgumentCaptor.forClass(java.util.UUID.class);
+        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+        verify(createUserUseCase).execute(uuidCaptor.capture(), userCaptor.capture());
+        assertEquals("John Doe", userCaptor.getValue().getName());
     }
 
     @Test

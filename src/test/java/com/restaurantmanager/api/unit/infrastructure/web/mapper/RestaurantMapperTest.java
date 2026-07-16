@@ -29,7 +29,7 @@ class RestaurantMapperTest {
         assertNotNull(response);
         assertEquals(uuid, response.getUuid());
         assertEquals("Test Restaurant", response.getName());
-        assertEquals(owner, response.getOwnerUser());
+        assertEquals(owner, response.getOwner());
     }
 
     @Test
@@ -39,7 +39,9 @@ class RestaurantMapperTest {
         request.setAddress("456 Oak Ave");
         request.setCuisineType("French");
         request.setOpeningHours("10AM-11PM");
-        request.setOwnerUserUuid(UUID.randomUUID());
+        com.restaurantmanager.api.model.OwnerRequest ownerReq = new com.restaurantmanager.api.model.OwnerRequest();
+        ownerReq.setId(UUID.randomUUID());
+        request.setOwner(ownerReq);
 
         Restaurant domain = mapper.map(2L, request);
 
@@ -55,7 +57,9 @@ class RestaurantMapperTest {
         request.setAddress("789 Elm St");
         request.setCuisineType("Spanish");
         request.setOpeningHours("12PM-12AM");
-        request.setOwnerUserUuid(UUID.randomUUID());
+        com.restaurantmanager.api.model.OwnerRequest ownerReq2 = new com.restaurantmanager.api.model.OwnerRequest();
+        ownerReq2.setId(UUID.randomUUID());
+        request.setOwner(ownerReq2);
 
         Restaurant domain = mapper.map(1L, 3L, request);
 

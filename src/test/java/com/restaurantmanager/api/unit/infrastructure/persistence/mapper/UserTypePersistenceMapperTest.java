@@ -17,7 +17,7 @@ class UserTypePersistenceMapperTest {
     @Test
     void testToEntity() {
         UUID uuid = UUID.randomUUID();
-        UserType domain = new UserType(1L, uuid, "ADMIN", "Administrator");
+        UserType domain = new UserType(1L, uuid, "ADMIN");
 
         UserTypeEntity entity = mapper.toEntity(domain);
 

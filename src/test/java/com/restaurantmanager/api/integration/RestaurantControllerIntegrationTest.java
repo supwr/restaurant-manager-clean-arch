@@ -49,7 +49,9 @@ class RestaurantControllerIntegrationTest {
         validRequest.setAddress("123 Main St");
         validRequest.setCuisineType("Italian");
         validRequest.setOpeningHours("9AM-10PM");
-        validRequest.setOwnerUserUuid(createOwnerUserUuid());
+        com.restaurantmanager.api.model.OwnerRequest ownerReq = new com.restaurantmanager.api.model.OwnerRequest();
+        ownerReq.setId(createOwnerUserUuid());
+        validRequest.setOwner(ownerReq);
     }
 
     @Test
@@ -62,8 +64,8 @@ class RestaurantControllerIntegrationTest {
                 .andExpect(jsonPath("$.address", equalTo("123 Main St")))
                 .andExpect(jsonPath("$.cuisineType", equalTo("Italian")))
                 .andExpect(jsonPath("$.uuid").exists())
-                .andExpect(jsonPath("$.ownerUser.id").exists())
-                .andExpect(jsonPath("$.ownerUser.name").exists())
+                .andExpect(jsonPath("$.owner.id").exists())
+                .andExpect(jsonPath("$.owner.name").exists())
                 .andExpect(jsonPath("$.id").doesNotExist());
     }
 
@@ -82,7 +84,7 @@ class RestaurantControllerIntegrationTest {
                 .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(1))))
                 .andExpect(jsonPath("$[0].name").exists())
                 .andExpect(jsonPath("$[0].uuid").exists())
-                .andExpect(jsonPath("$[0].ownerUser.id").exists())
+                .andExpect(jsonPath("$[0].owner.id").exists())
                 .andExpect(jsonPath("$[0].id").doesNotExist());
     }
 
@@ -102,8 +104,8 @@ class RestaurantControllerIntegrationTest {
                 .andExpect(jsonPath("$.name", equalTo(validRequest.getName())))
                 .andExpect(jsonPath("$.uuid", equalTo(uuid)))
                 .andExpect(jsonPath("$.address", equalTo("123 Main St")))
-                .andExpect(jsonPath("$.ownerUser.id").exists())
-                .andExpect(jsonPath("$.ownerUser.name").exists());
+                .andExpect(jsonPath("$.owner.id").exists())
+                .andExpect(jsonPath("$.owner.name").exists());
     }
 
     @Test
@@ -122,7 +124,9 @@ class RestaurantControllerIntegrationTest {
         updateRequest.setAddress("456 Oak Ave");
         updateRequest.setCuisineType("French");
         updateRequest.setOpeningHours("10AM-11PM");
-        updateRequest.setOwnerUserUuid(validRequest.getOwnerUserUuid());
+        com.restaurantmanager.api.model.OwnerRequest updateOwnerReq = new com.restaurantmanager.api.model.OwnerRequest();
+        updateOwnerReq.setId(((com.restaurantmanager.api.model.OwnerRequest) validRequest.getOwner()).getId());
+        updateRequest.setOwner(updateOwnerReq);
 
         mockMvc.perform(put("/api/v1/restaurants/{uuid}", uuid)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -131,7 +135,7 @@ class RestaurantControllerIntegrationTest {
                 .andExpect(jsonPath("$.name", equalTo("Updated Restaurant")))
                 .andExpect(jsonPath("$.address", equalTo("456 Oak Ave")))
                 .andExpect(jsonPath("$.cuisineType", equalTo("French")))
-                .andExpect(jsonPath("$.ownerUser.id").exists());
+                .andExpect(jsonPath("$.owner.id").exists());
     }
 
     @Test
@@ -159,7 +163,7 @@ class RestaurantControllerIntegrationTest {
         invalidRequest.setAddress("123 Main St");
         invalidRequest.setCuisineType("Italian");
         invalidRequest.setOpeningHours("9AM-10PM");
-        invalidRequest.setOwnerUserUuid(validRequest.getOwnerUserUuid());
+        invalidRequest.setOwner(((com.restaurantmanager.api.model.OwnerRequest) validRequest.getOwner()));
 
         mockMvc.perform(post("/api/v1/restaurants")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -191,8 +195,25 @@ class RestaurantControllerIntegrationTest {
             createUserRequest.setName("Owner " + suffix);
             createUserRequest.setEmail("owner-" + suffix + "@example.com");
             createUserRequest.setLogin("owner-" + suffix);
-            final UserType userType = new UserType();
-            userType.setName("OWNER");
+            // Try to reuse seeded USER_TYPE if exists, otherwise create it via API and use its uuid
+            String typeUuid = null;
+            try {
+                typeUuid = jdbcTemplate.queryForObject("select uuid from user_types where name = ?", String.class, "OWNER");
+            } catch (Exception ignored) {
+            }
+            if (typeUuid == null) {
+                com.restaurantmanager.api.model.UserTypeRequest userTypeRequest = new com.restaurantmanager.api.model.UserTypeRequest();
+                userTypeRequest.setName("OWNER");
+                MvcResult createTypeResult = mockMvc.perform(post("/api/v1/user-types")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userTypeRequest)))
+                        .andExpect(status().isCreated())
+                        .andReturn();
+
+                typeUuid = extractUuidFromJson(createTypeResult.getResponse().getContentAsString());
+            }
+            final com.restaurantmanager.api.model.UserTypeRef userType = new com.restaurantmanager.api.model.UserTypeRef();
+            userType.setId(UUID.fromString(typeUuid));
             createUserRequest.setType(userType);
 
             final MvcResult result = mockMvc.perform(post("/api/v1/users")

@@ -40,7 +40,7 @@ class UserControllerIntegrationTest {
     private CreateUserRequest validRequest;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         seedDefaultUserTypes();
 
         final String suffix = UUID.randomUUID().toString().substring(0, 8);
@@ -48,8 +48,25 @@ class UserControllerIntegrationTest {
         validRequest.setName("Test User " + suffix);
         validRequest.setEmail("testuser-" + suffix + "@example.com");
         validRequest.setLogin("testuser-" + suffix);
-        UserType userType = new UserType();
-        userType.setName("OWNER");
+        // Prefer seeded user type if present, otherwise create it and use its uuid
+        String typeUuid = null;
+        try {
+            typeUuid = jdbcTemplate.queryForObject("select uuid from user_types where name = ?", String.class, "OWNER");
+        } catch (Exception ignored) {
+        }
+        if (typeUuid == null) {
+            com.restaurantmanager.api.model.UserTypeRequest userTypeRequest = new com.restaurantmanager.api.model.UserTypeRequest();
+            userTypeRequest.setName("OWNER");
+            MvcResult createTypeResult = mockMvc.perform(post("/api/v1/user-types")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(userTypeRequest)))
+                    .andExpect(status().isCreated())
+                    .andReturn();
+
+            typeUuid = extractUuidFromJson(createTypeResult.getResponse().getContentAsString());
+        }
+        com.restaurantmanager.api.model.UserTypeRef userType = new com.restaurantmanager.api.model.UserTypeRef();
+        userType.setId(UUID.fromString(typeUuid));
         validRequest.setType(userType);
     }
 
@@ -149,6 +166,8 @@ class UserControllerIntegrationTest {
     void testCreateUser_InvalidData() throws Exception {
         CreateUserRequest invalidRequest = new CreateUserRequest();
         invalidRequest.setName(""); // Invalid: empty name
+        // Ensure type is present so controller validation triggers for name instead of causing NPE
+        invalidRequest.setType((com.restaurantmanager.api.model.UserTypeRef) validRequest.getType());
 
         mockMvc.perform(post("/api/v1/users")
                 .contentType(MediaType.APPLICATION_JSON)

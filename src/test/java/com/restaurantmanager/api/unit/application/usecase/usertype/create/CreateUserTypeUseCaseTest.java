@@ -29,7 +29,7 @@ class CreateUserTypeUseCaseTest {
 
     @Test
     void testExecute_Success() {
-        UserType userType = new UserType(null, "ADMIN", "Administrator");
+        UserType userType = new UserType(null, "ADMIN");
         when(userTypeGateway.existsByName("ADMIN")).thenReturn(false);
         when(userTypeGateway.save(userType)).thenReturn(userType);
 
@@ -41,7 +41,7 @@ class CreateUserTypeUseCaseTest {
 
     @Test
     void testExecute_DuplicateName() {
-        UserType userType = new UserType(null, "ADMIN", "Administrator");
+        UserType userType = new UserType(null, "ADMIN");
         when(userTypeGateway.existsByName("ADMIN")).thenReturn(true);
 
         ValidationException exception = assertThrows(ValidationException.class, () -> useCase.execute(userType));
@@ -52,7 +52,7 @@ class CreateUserTypeUseCaseTest {
 
     @Test
     void testExecute_InvalidName() {
-        UserType userType = new UserType(null, "", "Administrator");
+        UserType userType = new UserType(null, "");
         assertThrows(ValidationException.class, () -> useCase.execute(userType));
         verify(userTypeGateway, never()).save(any());
     }

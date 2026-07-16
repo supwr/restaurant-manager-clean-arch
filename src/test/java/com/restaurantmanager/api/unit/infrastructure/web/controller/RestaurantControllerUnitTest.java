@@ -71,7 +71,7 @@ class RestaurantControllerUnitTest {
         RelatedUser owner = new RelatedUser();
         owner.setId(ownerUuid);
         owner.setName("Owner");
-        response.setOwnerUser(owner);
+        response.setOwner(owner);
 
         // Mock the owner without using the private constructor
         com.restaurantmanager.api.domain.model.User mockOwner = mock(com.restaurantmanager.api.domain.model.User.class);
@@ -85,7 +85,10 @@ class RestaurantControllerUnitTest {
         when(restaurantMapper.map(eq(domain), any(RelatedUser.class))).thenReturn(response);
 
         RestaurantRequest request = new RestaurantRequest();
-        request.setName("Resto"); request.setAddress("Street"); request.setCuisineType("Italian"); request.setOpeningHours("9AM"); request.setOwnerUserUuid(ownerUuid);
+        request.setName("Resto"); request.setAddress("Street"); request.setCuisineType("Italian"); request.setOpeningHours("9AM");
+        com.restaurantmanager.api.model.OwnerRequest ownerReq = new com.restaurantmanager.api.model.OwnerRequest();
+        ownerReq.setId(ownerUuid);
+        request.setOwner(ownerReq);
 
         mockMvc.perform(post("/api/v1/restaurants").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isCreated())
@@ -103,7 +106,7 @@ class RestaurantControllerUnitTest {
         RelatedUser owner = new RelatedUser();
         owner.setId(ownerUuid);
         owner.setName("Owner");
-        response.setOwnerUser(owner);
+        response.setOwner(owner);
 
         // Mock the owner without using the private constructor
         com.restaurantmanager.api.domain.model.User mockOwner = mock(com.restaurantmanager.api.domain.model.User.class);
@@ -130,7 +133,7 @@ class RestaurantControllerUnitTest {
         RelatedUser owner = new RelatedUser();
         owner.setId(ownerUuid);
         owner.setName("Owner");
-        response.setOwnerUser(owner);
+        response.setOwner(owner);
 
         // Mock the owner without using the private constructor
         com.restaurantmanager.api.domain.model.User mockOwner = mock(com.restaurantmanager.api.domain.model.User.class);

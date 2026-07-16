@@ -30,8 +30,8 @@ class ListUserTypesUseCaseTest {
 
     @Test
     void testExecute_Success() {
-        UserType userType1 = new UserType(1L, UUID.randomUUID(), "ADMIN", "Administrator");
-        UserType userType2 = new UserType(2L, UUID.randomUUID(), "CUSTOMER", "Customer");
+        UserType userType1 = new UserType(1L, UUID.randomUUID(), "ADMIN");
+        UserType userType2 = new UserType(2L, UUID.randomUUID(), "CUSTOMER");
         when(userTypeGateway.findAll()).thenReturn(List.of(userType1, userType2));
 
         List<UserType> result = useCase.execute();

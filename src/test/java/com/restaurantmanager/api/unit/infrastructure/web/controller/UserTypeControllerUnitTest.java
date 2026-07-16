@@ -53,9 +53,9 @@ class UserTypeControllerUnitTest {
 
     @Test
     void testCreateUserType_Success() throws Exception {
-        UserType domain = new UserType(1L, UUID.randomUUID(), "ADMIN", "Admin");
+        UserType domain = new UserType(1L, UUID.randomUUID(), "ADMIN");
         UserTypeResponse response = new UserTypeResponse(); response.setUuid(domain.getUuid()); response.setName("ADMIN");
-        when(userTypeMapper.map(any(UserTypeRequest.class))).thenReturn(new UserType(null, "ADMIN", "Admin"));
+        when(userTypeMapper.map(any(UserTypeRequest.class))).thenReturn(new UserType(null, "ADMIN"));
         when(createUserTypeUseCase.execute(any(UserType.class))).thenReturn(domain);
         when(userTypeMapper.map(domain)).thenReturn(response);
 
@@ -68,7 +68,7 @@ class UserTypeControllerUnitTest {
 
     @Test
     void testListUserTypes_Success() throws Exception {
-        UserType domain = new UserType(1L, UUID.randomUUID(), "ADMIN", "Admin");
+        UserType domain = new UserType(1L, UUID.randomUUID(), "ADMIN");
         UserTypeResponse response = new UserTypeResponse(); response.setUuid(domain.getUuid()); response.setName("ADMIN");
         when(listUserTypesUseCase.execute()).thenReturn(List.of(domain));
         when(userTypeMapper.map(domain)).thenReturn(response);
@@ -81,7 +81,7 @@ class UserTypeControllerUnitTest {
     @Test
     void testGetUserTypeByUuid_Success() throws Exception {
         UUID uuid = UUID.randomUUID();
-        UserType domain = new UserType(1L, uuid, "ADMIN", "Admin");
+        UserType domain = new UserType(1L, uuid, "ADMIN");
         UserTypeResponse response = new UserTypeResponse(); response.setUuid(uuid); response.setName("ADMIN");
         when(userTypeGateway.findByUuid(uuid)).thenReturn(Optional.of(domain));
         when(getUserTypeUseCase.execute(1L)).thenReturn(domain);

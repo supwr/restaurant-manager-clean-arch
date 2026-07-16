@@ -52,7 +52,9 @@ class MenuItemControllerIntegrationTest {
         restaurantRequest.setAddress("123 Main St");
         restaurantRequest.setCuisineType("Italian");
         restaurantRequest.setOpeningHours("9AM-10PM");
-        restaurantRequest.setOwnerUserUuid(ownerUserUuid);
+        com.restaurantmanager.api.model.OwnerRequest ownerReq = new com.restaurantmanager.api.model.OwnerRequest();
+        ownerReq.setId(ownerUserUuid);
+        restaurantRequest.setOwner(ownerReq);
 
         MvcResult createResult = mockMvc.perform(post("/api/v1/restaurants")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -211,8 +213,25 @@ class MenuItemControllerIntegrationTest {
         createUserRequest.setName("Owner " + suffix);
         createUserRequest.setEmail("owner-" + suffix + "@example.com");
         createUserRequest.setLogin("owner-" + suffix);
-        final UserType userType = new UserType();
-        userType.setName("OWNER");
+        // Prefer seeded user type if present, otherwise create via API and use its uuid
+        String typeUuid = null;
+        try {
+            typeUuid = jdbcTemplate.queryForObject("select uuid from user_types where name = ?", String.class, "OWNER");
+        } catch (Exception ignored) {
+        }
+        if (typeUuid == null) {
+            com.restaurantmanager.api.model.UserTypeRequest userTypeRequest = new com.restaurantmanager.api.model.UserTypeRequest();
+            userTypeRequest.setName("OWNER");
+            MvcResult createTypeResult = mockMvc.perform(post("/api/v1/user-types")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(userTypeRequest)))
+                    .andExpect(status().isCreated())
+                    .andReturn();
+
+            typeUuid = extractUuidFromJson(createTypeResult.getResponse().getContentAsString());
+        }
+        final com.restaurantmanager.api.model.UserTypeRef userType = new com.restaurantmanager.api.model.UserTypeRef();
+        userType.setId(UUID.fromString(typeUuid));
         createUserRequest.setType(userType);
 
         final MvcResult result = mockMvc.perform(post("/api/v1/users")

@@ -36,9 +36,9 @@ class UpdateUserTypeUseCaseTest {
         long userTypeId = 1L;
         UUID uuid = UUID.randomUUID();
 
-        UserType existing = new UserType(userTypeId, uuid, "ADMIN", "Administrator");
-        UserType updateData = new UserType(userTypeId, "MANAGER", "Manager");
-        UserType updated = new UserType(userTypeId, uuid, "MANAGER", "Manager");
+        UserType existing = new UserType(userTypeId, uuid, "ADMIN");
+        UserType updateData = new UserType(userTypeId, "MANAGER");
+        UserType updated = new UserType(userTypeId, uuid, "MANAGER");
 
         when(userTypeGateway.findById(userTypeId)).thenReturn(Optional.of(existing));
         when(userTypeGateway.existsByName("MANAGER")).thenReturn(false);
@@ -56,7 +56,7 @@ class UpdateUserTypeUseCaseTest {
     @Test
     void testUpdateUserType_NotFound() {
         long userTypeId = 999L;
-        UserType updateData = new UserType(userTypeId, "MANAGER", "Manager");
+        UserType updateData = new UserType(userTypeId, "MANAGER");
 
         when(userTypeGateway.findById(userTypeId)).thenReturn(Optional.empty());
 
@@ -73,8 +73,8 @@ class UpdateUserTypeUseCaseTest {
         long userTypeId = 1L;
         UUID uuid = UUID.randomUUID();
 
-        UserType existing = new UserType(userTypeId, uuid, "ADMIN", "Administrator");
-        UserType updateData = new UserType(userTypeId, "MANAGER", "Manager");
+        UserType existing = new UserType(userTypeId, uuid, "ADMIN");
+        UserType updateData = new UserType(userTypeId, "MANAGER");
 
         when(userTypeGateway.findById(userTypeId)).thenReturn(Optional.of(existing));
         when(userTypeGateway.existsByName("MANAGER")).thenReturn(true);
@@ -91,8 +91,8 @@ class UpdateUserTypeUseCaseTest {
         long userTypeId = 1L;
         UUID uuid = UUID.randomUUID();
 
-        UserType existing = new UserType(userTypeId, uuid, "ADMIN", "Administrator");
-        UserType updateData = new UserType(userTypeId, "   ", "Manager");
+        UserType existing = new UserType(userTypeId, uuid, "ADMIN");
+        UserType updateData = new UserType(userTypeId, "   ");
 
         when(userTypeGateway.findById(userTypeId)).thenReturn(Optional.of(existing));
 
@@ -105,7 +105,7 @@ class UpdateUserTypeUseCaseTest {
 
     @Test
     void testUpdateUserType_NullId() {
-        UserType updateData = new UserType(1L, "MANAGER", "Manager");
+        UserType updateData = new UserType(1L, "MANAGER");
 
         assertThrows(NullPointerException.class, () -> useCase.execute(null, updateData));
 

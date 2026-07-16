@@ -17,7 +17,7 @@ class UserTypeMapperTest {
     @Test
     void testMapDomainToResponse() {
         java.util.UUID uuid = java.util.UUID.randomUUID();
-        UserType domain = new UserType(1L, uuid, "ADMIN", "Administrator");
+        UserType domain = new UserType(1L, uuid, "ADMIN");
 
         UserTypeResponse response = mapper.map(domain);
 
@@ -30,7 +30,6 @@ class UserTypeMapperTest {
     void testMapRequestToDomain() {
         UserTypeRequest request = new UserTypeRequest();
         request.setName("CUSTOMER");
-        request.setObservation(JsonNullable.of("Customer role"));
 
         UserType domain = mapper.map(request);
 
@@ -43,7 +42,6 @@ class UserTypeMapperTest {
     void testMapRequestToUpdateDomain() {
         UserTypeRequest request = new UserTypeRequest();
         request.setName("MANAGER");
-        request.setObservation(JsonNullable.of("Manager role"));
 
         UserType domain = mapper.map(10L, request);
 
