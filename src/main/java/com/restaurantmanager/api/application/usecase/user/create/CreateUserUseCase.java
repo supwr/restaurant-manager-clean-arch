@@ -31,7 +31,7 @@ public class CreateUserUseCase {
 			throw new ValidationException("login", user.getLogin(), "Login already exists");
 		}
 
-		// Resolve user type by UUID
+
 		final UserType userType = userTypeGateway.findByUuid(userTypeUuid)
 				.orElseThrow(() -> new EntityNotFoundException("UserType", userTypeUuid.toString()));
 

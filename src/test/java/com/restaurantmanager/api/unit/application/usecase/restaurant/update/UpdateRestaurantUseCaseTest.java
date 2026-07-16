@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 class UpdateRestaurantUseCaseTest {
     @Test
     void placeholder() {
-        // Test removed during refactor
+
     }
 }
 

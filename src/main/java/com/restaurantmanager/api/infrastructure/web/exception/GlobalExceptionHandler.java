@@ -16,20 +16,14 @@ import org.springframework.web.context.request.WebRequest;
 import java.net.URI;
 import java.time.Instant;
 
-/**
- * Global exception handler that converts exceptions to ProblemDetail (RFC 7807) format.
- * Provides standardized error responses for the API.
- */
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
     private static final String PROBLEM_BASE_URL = "https://api.restaurantmanager.com/problems/";
 
-    /**
-     * Handles EntityNotFoundException.
-     * Returns 404 Not Found with ProblemDetail.
-     */
+
     @ExceptionHandler(EntityNotFoundException.class)
     public ProblemDetail handleEntityNotFound(EntityNotFoundException ex, WebRequest request) {
         logger.warn("Entity not found: {}", ex.getMessage());
@@ -53,10 +47,7 @@ public class GlobalExceptionHandler {
         return problemDetail;
     }
 
-    /**
-     * Handles ValidationException.
-     * Returns 400 Bad Request with ProblemDetail.
-     */
+
     @ExceptionHandler(ValidationException.class)
     public ProblemDetail handleValidationException(ValidationException ex, WebRequest request) {
         logger.warn("Validation error: {}", ex.getMessage());
@@ -80,10 +71,7 @@ public class GlobalExceptionHandler {
         return problemDetail;
     }
 
-    /**
-     * Handles ConflictException.
-     * Returns 409 Conflict with ProblemDetail.
-     */
+
     @ExceptionHandler(ConflictException.class)
     public ProblemDetail handleConflict(ConflictException ex, WebRequest request) {
         logger.warn("Conflict: {}", ex.getMessage());
@@ -107,10 +95,7 @@ public class GlobalExceptionHandler {
         return problemDetail;
     }
 
-    /**
-     * Handles Spring validation errors (MethodArgumentNotValidException).
-     * Returns 400 Bad Request with ProblemDetail.
-     */
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ProblemDetail handleMethodArgumentNotValid(
         MethodArgumentNotValidException ex,
@@ -128,7 +113,7 @@ public class GlobalExceptionHandler {
         problemDetail.setInstance(URI.create(request.getDescription(false).replace("uri=", "")));
         problemDetail.setProperty("timestamp", Instant.now());
 
-        // Add field errors
+
         var fieldErrors = ex.getBindingResult().getFieldErrors();
         if (!fieldErrors.isEmpty()) {
             problemDetail.setProperty("errors", fieldErrors.stream()
@@ -145,10 +130,7 @@ public class GlobalExceptionHandler {
         return problemDetail;
     }
 
-    /**
-     * Handles all other DomainException types.
-     * Returns 400 Bad Request with ProblemDetail.
-     */
+
     @ExceptionHandler(DomainException.class)
     public ProblemDetail handleDomainException(DomainException ex, WebRequest request) {
         logger.error("Domain exception occurred: {}", ex.getMessage());
@@ -165,10 +147,7 @@ public class GlobalExceptionHandler {
         return problemDetail;
     }
 
-    /**
-     * Handles unexpected exceptions.
-     * Returns 500 Internal Server Error with ProblemDetail.
-     */
+
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleGenericException(Exception ex, WebRequest request) {
         logger.error("Unexpected error occurred", ex);

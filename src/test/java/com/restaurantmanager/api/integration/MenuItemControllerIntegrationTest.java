@@ -213,7 +213,7 @@ class MenuItemControllerIntegrationTest {
         createUserRequest.setName("Owner " + suffix);
         createUserRequest.setEmail("owner-" + suffix + "@example.com");
         createUserRequest.setLogin("owner-" + suffix);
-        // Prefer seeded user type if present, otherwise create via API and use its uuid
+
         String typeUuid = null;
         try {
             typeUuid = jdbcTemplate.queryForObject("select uuid from user_types where name = ?", String.class, "OWNER");

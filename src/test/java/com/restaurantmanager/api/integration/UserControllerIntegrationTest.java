@@ -48,7 +48,7 @@ class UserControllerIntegrationTest {
         validRequest.setName("Test User " + suffix);
         validRequest.setEmail("testuser-" + suffix + "@example.com");
         validRequest.setLogin("testuser-" + suffix);
-        // Prefer seeded user type if present, otherwise create it and use its uuid
+
         String typeUuid = null;
         try {
             typeUuid = jdbcTemplate.queryForObject("select uuid from user_types where name = ?", String.class, "OWNER");
@@ -165,8 +165,8 @@ class UserControllerIntegrationTest {
     @Test
     void testCreateUser_InvalidData() throws Exception {
         CreateUserRequest invalidRequest = new CreateUserRequest();
-        invalidRequest.setName(""); // Invalid: empty name
-        // Ensure type is present so controller validation triggers for name instead of causing NPE
+        invalidRequest.setName("");
+
         invalidRequest.setType((com.restaurantmanager.api.model.UserTypeRef) validRequest.getType());
 
         mockMvc.perform(post("/api/v1/users")

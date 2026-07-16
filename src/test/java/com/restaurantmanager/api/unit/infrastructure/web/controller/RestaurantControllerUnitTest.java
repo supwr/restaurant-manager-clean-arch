@@ -73,7 +73,7 @@ class RestaurantControllerUnitTest {
         owner.setName("Owner");
         response.setOwner(owner);
 
-        // Mock the owner without using the private constructor
+
         com.restaurantmanager.api.domain.model.User mockOwner = mock(com.restaurantmanager.api.domain.model.User.class);
         when(mockOwner.getUuid()).thenReturn(ownerUuid);
         when(mockOwner.getName()).thenReturn("Owner");
@@ -108,7 +108,7 @@ class RestaurantControllerUnitTest {
         owner.setName("Owner");
         response.setOwner(owner);
 
-        // Mock the owner without using the private constructor
+
         com.restaurantmanager.api.domain.model.User mockOwner = mock(com.restaurantmanager.api.domain.model.User.class);
         when(mockOwner.getUuid()).thenReturn(ownerUuid);
         when(mockOwner.getName()).thenReturn("Owner");
@@ -135,7 +135,7 @@ class RestaurantControllerUnitTest {
         owner.setName("Owner");
         response.setOwner(owner);
 
-        // Mock the owner without using the private constructor
+
         com.restaurantmanager.api.domain.model.User mockOwner = mock(com.restaurantmanager.api.domain.model.User.class);
         when(mockOwner.getUuid()).thenReturn(ownerUuid);
         when(mockOwner.getName()).thenReturn("Owner");

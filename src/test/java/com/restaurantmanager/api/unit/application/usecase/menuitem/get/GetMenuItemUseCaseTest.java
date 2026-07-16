@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 class GetMenuItemUseCaseTest {
     @Test
     void placeholder() {
-        // Test removed during refactor
+
     }
 }
 

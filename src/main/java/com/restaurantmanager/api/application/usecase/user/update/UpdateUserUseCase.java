@@ -27,7 +27,7 @@ public class UpdateUserUseCase {
 		final User existing = userGateway.findByUuid(uuid)
 			.orElseThrow(() -> new EntityNotFoundException("User", uuid.toString()));
 
-		// If userTypeUuid provided, resolve and set
+
 		if (userTypeUuid != null) {
 			final UserType userType = userTypeGateway.findByUuid(userTypeUuid)
 				.orElseThrow(() -> new EntityNotFoundException("UserType", userTypeUuid.toString()));

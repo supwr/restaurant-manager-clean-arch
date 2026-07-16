@@ -159,7 +159,7 @@ class RestaurantControllerIntegrationTest {
     @Test
     void testCreateRestaurant_InvalidData() throws Exception {
         RestaurantRequest invalidRequest = new RestaurantRequest();
-        invalidRequest.setName(""); // Invalid: empty name
+        invalidRequest.setName("");
         invalidRequest.setAddress("123 Main St");
         invalidRequest.setCuisineType("Italian");
         invalidRequest.setOpeningHours("9AM-10PM");
@@ -195,7 +195,7 @@ class RestaurantControllerIntegrationTest {
             createUserRequest.setName("Owner " + suffix);
             createUserRequest.setEmail("owner-" + suffix + "@example.com");
             createUserRequest.setLogin("owner-" + suffix);
-            // Try to reuse seeded USER_TYPE if exists, otherwise create it via API and use its uuid
+
             String typeUuid = null;
             try {
                 typeUuid = jdbcTemplate.queryForObject("select uuid from user_types where name = ?", String.class, "OWNER");

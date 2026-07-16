@@ -7,6 +7,18 @@ info:
   version: 1.0.0
 servers:
   - url: http://localhost:8080
+    description: Development Server
+
+tags:
+  - name: Users
+    description: User management
+  - name: Menu Items
+    description: Menu item management
+  - name: Restaurants
+    description: Restaurant management
+  - name: User Types
+    description: User type management
+
 paths:
   /api/v1/users:
     get:

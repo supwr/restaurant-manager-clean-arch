@@ -52,7 +52,7 @@ class UserTypeControllerIntegrationTest {
 
     @Test
     void testListUserTypes_Success() throws Exception {
-        // Create a user type first
+
         UserTypeRequest request = new UserTypeRequest();
         request.setName("Manager");
 
@@ -137,7 +137,7 @@ class UserTypeControllerIntegrationTest {
     @Test
     void testCreateUserType_InvalidData() throws Exception {
         UserTypeRequest invalidRequest = new UserTypeRequest();
-        invalidRequest.setName(""); // Invalid: empty name
+        invalidRequest.setName("");
 
         mockMvc.perform(post("/api/v1/user-types")
                 .contentType(MediaType.APPLICATION_JSON)
