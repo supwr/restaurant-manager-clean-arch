@@ -557,10 +557,9 @@ components:
         openingHours:
           type: string
           example: Mon-Fri 09:00-18:00
-        ownerUserUuid:
-          type: string
-          format: uuid
-      required: [ name, address, cuisineType, openingHours, ownerUserUuid ]
+        owner:
+          $ref: '#/components/schemas/OwnerRequest'
+      required: [ name, address, cuisineType, openingHours, owner ]
     RestaurantResponse:
       type: object
       properties:
@@ -575,7 +574,7 @@ components:
           type: string
         openingHours:
           type: string
-        ownerUser:
+        owner:
           $ref: '#/components/schemas/RelatedUser'
     MenuItemRequest:
       type: object
@@ -692,6 +691,14 @@ components:
         name:
           type: string
           example: OWNER
+    OwnerRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: User UUID
+      required: [ id ]
     RelatedRestaurant:
       type: object
       properties:

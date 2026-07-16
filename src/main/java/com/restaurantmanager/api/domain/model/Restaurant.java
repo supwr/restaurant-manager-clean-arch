@@ -12,6 +12,7 @@ public class Restaurant {
     private final String cuisineType;
     private final String openingHours;
     private final Long ownerUserId;
+    private final User owner;
 
     public Restaurant(
             final Long id,
@@ -28,6 +29,7 @@ public class Restaurant {
         this.cuisineType = cuisineType;
         this.openingHours = openingHours;
         this.ownerUserId = ownerUserId;
+        this.owner = null;
     }
 
     public Restaurant(
@@ -46,6 +48,27 @@ public class Restaurant {
         this.cuisineType = cuisineType;
         this.openingHours = openingHours;
         this.ownerUserId = ownerUserId;
+        this.owner = null;
+    }
+
+    public Restaurant(
+            final Long id,
+            final UUID uuid,
+            final String name,
+            final String address,
+            final String cuisineType,
+            final String openingHours,
+            final Long ownerUserId,
+            final User owner
+    ) {
+        this.id = id;
+        this.uuid = uuid;
+        this.name = name;
+        this.address = address;
+        this.cuisineType = cuisineType;
+        this.openingHours = openingHours;
+        this.ownerUserId = ownerUserId;
+        this.owner = owner;
     }
 
     public Long getId() {
@@ -74,6 +97,10 @@ public class Restaurant {
 
     public Long getOwnerUserId() {
         return ownerUserId;
+    }
+
+    public User getOwner() {
+        return owner;
     }
 
     public void validate() {

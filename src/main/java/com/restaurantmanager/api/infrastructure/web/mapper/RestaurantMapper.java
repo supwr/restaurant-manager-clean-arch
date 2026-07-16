@@ -24,13 +24,13 @@ public interface RestaurantMapper {
         return response;
     }
 
-    default RestaurantResponse map(final Restaurant restaurant, final RelatedUser ownerUser) {
+    default RestaurantResponse map(final Restaurant restaurant, final RelatedUser owner) {
         if (restaurant == null) {
             return null;
         }
 
         final RestaurantResponse response = map(restaurant);
-        response.setOwnerUser(ownerUser);
+        response.setOwner(owner);
         return response;
     }
 

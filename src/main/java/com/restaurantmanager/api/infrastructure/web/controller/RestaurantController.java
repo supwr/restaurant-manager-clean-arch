@@ -58,7 +58,7 @@ public class RestaurantController implements RestaurantsApi {
 
     @Override
     public ResponseEntity<RestaurantResponse> createRestaurant(@Valid final RestaurantRequest restaurantRequest) {
-        final Long ownerUserId = resolveOwnerUserId(restaurantRequest.getOwnerUserUuid());
+        final Long ownerUserId = resolveOwnerUserId(restaurantRequest.getOwner().getId());
         final Restaurant created = createRestaurantUseCase.execute(restaurantMapper.map(ownerUserId, restaurantRequest));
         return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(created));
     }
@@ -83,7 +83,7 @@ public class RestaurantController implements RestaurantsApi {
 
     @Override
     public ResponseEntity<RestaurantResponse> updateRestaurant(final UUID id, @Valid final RestaurantRequest restaurantRequest) {
-        final Long ownerUserId = resolveOwnerUserId(restaurantRequest.getOwnerUserUuid());
+        final Long ownerUserId = resolveOwnerUserId(restaurantRequest.getOwner().getId());
         final Restaurant updated = updateRestaurantUseCase.execute(id, restaurantMapper.map(ownerUserId, restaurantRequest));
         return ResponseEntity.ok(toResponse(updated));
     }
