@@ -37,7 +37,12 @@ public class CreateUserUseCase {
 
 		user.setUserType(userType);
 
-		return userGateway.save(user);
+		final User saved = userGateway.save(user);
+		if (saved == null || saved.getUuid() == null) {
+			return saved;
+		}
+
+		return userGateway.findByUuid(saved.getUuid()).orElse(saved);
 	}
 
 	private void validateUser(final User user) {

@@ -25,7 +25,13 @@ public class RestaurantPersistenceGateway implements RestaurantGateway {
     @Override
     @Transactional
     public Restaurant save(final Restaurant restaurant) {
-        return mapper.toDomain(repository.save(mapper.toEntity(restaurant)));
+        final Restaurant saved = mapper.toDomain(repository.save(mapper.toEntity(restaurant)));
+
+        if (saved == null || saved.getUuid() == null) {
+            return saved;
+        }
+
+        return repository.findByUuid(saved.getUuid()).map(mapper::toDomain).orElse(saved);
     }
 
     @Override

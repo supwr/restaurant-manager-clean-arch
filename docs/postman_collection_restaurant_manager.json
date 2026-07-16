@@ -1,0 +1,344 @@
+{
+  "info": {
+    "name": "Restaurant Manager API - Validation Collection",
+    "_postman_id": "9b8e3a6e-collection",
+    "description": "Collection for validating all endpoints defined in src/main/resources/openapi/restaurant-manager-api.yaml. Folders are organized by tag. No variables or scripts included.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "List Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/v1/users?page=0&size=20",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api","v1","users"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"login\": \"john.doe\",\n  \"type\": { \"id\": \"550e8400-e29b-41d4-a716-446655440000\" }\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/v1/users",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api","v1","users"]
+            }
+          }
+        },
+        {
+          "name": "Get User by UUID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/v1/users/550e8400-e29b-41d4-a716-446655440001",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api","v1","users","550e8400-e29b-41d4-a716-446655440001"]
+            }
+          }
+        },
+        {
+          "name": "Update User by UUID",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Updated\",\n  \"email\": \"john.updated@example.com\",\n  \"login\": \"john.updated\",\n  \"type\": { \"id\": \"550e8400-e29b-41d4-a716-446655440002\" }\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/v1/users/550e8400-e29b-41d4-a716-446655440001",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api","v1","users","550e8400-e29b-41d4-a716-446655440001"]
+            }
+          }
+        },
+        {
+          "name": "Delete User by UUID",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/v1/users/550e8400-e29b-41d4-a716-446655440001",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api","v1","users","550e8400-e29b-41d4-a716-446655440001"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "User Types",
+      "item": [
+        {
+          "name": "List User Types",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/v1/user-types",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api","v1","user-types"]
+            }
+          }
+        },
+        {
+          "name": "Create User Type",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"OWNER\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/v1/user-types",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api","v1","user-types"]
+            }
+          }
+        },
+        {
+          "name": "Get User Type by UUID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/v1/user-types/550e8400-e29b-41d4-a716-446655440000",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api","v1","user-types","550e8400-e29b-41d4-a716-446655440000"]
+            }
+          }
+        },
+        {
+          "name": "Update User Type by UUID",
+          "request": {
+            "method": "PUT",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"OWNER_UPDATED\"\n}" },
+            "url": {
+              "raw": "http://localhost:8080/api/v1/user-types/550e8400-e29b-41d4-a716-446655440000",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api","v1","user-types","550e8400-e29b-41d4-a716-446655440000"]
+            }
+          }
+        },
+        {
+          "name": "Delete User Type by UUID",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/v1/user-types/550e8400-e29b-41d4-a716-446655440000",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api","v1","user-types","550e8400-e29b-41d4-a716-446655440000"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Restaurants",
+      "item": [
+        {
+          "name": "List Restaurants",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/v1/restaurants?page=0&size=20",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api","v1","restaurants"],
+              "query": [ { "key": "page", "value": "0" }, { "key": "size", "value": "20" } ]
+            }
+          }
+        },
+        {
+          "name": "Create Restaurant",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"The Green Table\",\n  \"address\": \"123 Main Street\",\n  \"cuisineType\": \"Italian\",\n  \"openingHours\": \"Mon-Fri 09:00-18:00\",\n  \"owner\": { \"id\": \"550e8400-e29b-41d4-a716-446655440000\" }\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/v1/restaurants",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api","v1","restaurants"]
+            }
+          }
+        },
+        {
+          "name": "Get Restaurant by UUID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/v1/restaurants/550e8400-e29b-41d4-a716-446655440010",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api","v1","restaurants","550e8400-e29b-41d4-a716-446655440010"]
+            }
+          }
+        },
+        {
+          "name": "Update Restaurant by UUID",
+          "request": {
+            "method": "PUT",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"The Green Table Updated\",\n  \"address\": \"456 Other Street\",\n  \"cuisineType\": \"Italian\",\n  \"openingHours\": \"Mon-Sun 08:00-22:00\",\n  \"owner\": { \"id\": \"550e8400-e29b-41d4-a716-446655440000\" }\n}" },
+            "url": {
+              "raw": "http://localhost:8080/api/v1/restaurants/550e8400-e29b-41d4-a716-446655440010",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api","v1","restaurants","550e8400-e29b-41d4-a716-446655440010"]
+            }
+          }
+        },
+        {
+          "name": "Delete Restaurant by UUID",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/v1/restaurants/550e8400-e29b-41d4-a716-446655440010",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api","v1","restaurants","550e8400-e29b-41d4-a716-446655440010"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Menu Items",
+      "item": [
+        {
+          "name": "List Menu Items for Restaurant",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/v1/restaurants/550e8400-e29b-41d4-a716-446655440010/menu-items?page=0&size=20",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api","v1","restaurants","550e8400-e29b-41d4-a716-446655440010","menu-items"],
+              "query": [ { "key": "page", "value": "0" }, { "key": "size", "value": "20" } ]
+            }
+          }
+        },
+        {
+          "name": "Create Menu Item for Restaurant",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Pasta Carbonara\",\n  \"description\": \"Creamy pasta with pancetta and parmesan\",\n  \"price\": 59.90,\n  \"localOnly\": false,\n  \"photoPath\": \"/images/menu/pasta-carbonara.jpg\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/v1/restaurants/550e8400-e29b-41d4-a716-446655440010/menu-items",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api","v1","restaurants","550e8400-e29b-41d4-a716-446655440010","menu-items"]
+            }
+          }
+        },
+        {
+          "name": "Get Menu Item by UUID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/v1/restaurants/550e8400-e29b-41d4-a716-446655440010/menu-items/550e8400-e29b-41d4-a716-446655440020",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api","v1","restaurants","550e8400-e29b-41d4-a716-446655440010","menu-items","550e8400-e29b-41d4-a716-446655440020"]
+            }
+          }
+        },
+        {
+          "name": "Update Menu Item by UUID",
+          "request": {
+            "method": "PUT",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Pasta Carbonara Deluxe\",\n  \"description\": \"With truffle\",\n  \"price\": 79.90,\n  \"localOnly\": false,\n  \"photoPath\": \"/images/menu/pasta-carbonara-deluxe.jpg\"\n}" },
+            "url": {
+              "raw": "http://localhost:8080/api/v1/restaurants/550e8400-e29b-41d4-a716-446655440010/menu-items/550e8400-e29b-41d4-a716-446655440020",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api","v1","restaurants","550e8400-e29b-41d4-a716-446655440010","menu-items","550e8400-e29b-41d4-a716-446655440020"]
+            }
+          }
+        },
+        {
+          "name": "Delete Menu Item by UUID",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/v1/restaurants/550e8400-e29b-41d4-a716-446655440010/menu-items/550e8400-e29b-41d4-a716-446655440020",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api","v1","restaurants","550e8400-e29b-41d4-a716-446655440010","menu-items","550e8400-e29b-41d4-a716-446655440020"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+

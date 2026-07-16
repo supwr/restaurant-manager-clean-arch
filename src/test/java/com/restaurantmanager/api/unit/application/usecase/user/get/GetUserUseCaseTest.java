@@ -3,7 +3,6 @@ package com.restaurantmanager.api.unit.application.usecase.user.get;
 import com.restaurantmanager.api.application.gateway.UserGateway;
 import com.restaurantmanager.api.application.usecase.user.get.GetUserUseCase;
 import com.restaurantmanager.api.domain.exception.EntityNotFoundException;
-import com.restaurantmanager.api.domain.model.Owner;
 import com.restaurantmanager.api.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,7 +10,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,7 +33,7 @@ class GetUserUseCaseTest {
     @Test
     void testExecute_Success() {
         UUID uuid = UUID.randomUUID();
-        User user = Owner.create(1L, uuid, "John Doe", "john@example.com", "john", true, null, null, Instant.now(), Instant.now());
+        User user = new User(1L, uuid, "John Doe", "john@example.com", "john", true, null, null, null);
 
         when(userGateway.findByUuid(uuid)).thenReturn(Optional.of(user));
 

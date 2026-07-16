@@ -26,7 +26,13 @@ public class UserPersistenceGateway implements UserGateway {
     @Override
     @Transactional
     public User save(final User user) {
-        return mapper.toDomain(repository.save(mapper.toEntity(user)));
+        final User saved = mapper.toDomain(repository.save(mapper.toEntity(user)));
+
+        if (saved == null || saved.getUuid() == null) {
+            return saved;
+        }
+
+        return repository.findByUuid(saved.getUuid()).map(mapper::toDomain).orElse(saved);
     }
 
     @Override

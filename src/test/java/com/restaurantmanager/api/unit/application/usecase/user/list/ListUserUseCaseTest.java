@@ -3,7 +3,6 @@ package com.restaurantmanager.api.unit.application.usecase.user.list;
 import com.restaurantmanager.api.application.gateway.UserGateway;
 import com.restaurantmanager.api.application.usecase.user.list.ListUserCase;
 import com.restaurantmanager.api.domain.exception.ValidationException;
-import com.restaurantmanager.api.domain.model.Owner;
 import com.restaurantmanager.api.domain.model.PageResult;
 import com.restaurantmanager.api.domain.model.Pagination;
 import com.restaurantmanager.api.domain.model.User;
@@ -13,7 +12,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,8 +34,8 @@ class ListUserUseCaseTest {
 
     @Test
     void testExecute_Success() {
-        User user1 = Owner.create(1L, UUID.randomUUID(), "John", "john@example.com", "john", true, null, null, Instant.now(), Instant.now());
-        User user2 = Owner.create(2L, UUID.randomUUID(), "Jane", "jane@example.com", "jane", true, null, null, Instant.now(), Instant.now());
+        User user1 = new User(1L, UUID.randomUUID(), "John", "john@example.com", "john", true, null, null, null);
+        User user2 = new User(2L, UUID.randomUUID(), "Jane", "jane@example.com", "jane", true, null, null, null);
         when(userGateway.findAll()).thenReturn(List.of(user1, user2));
 
         PageResult<User> result = useCase.execute(new Pagination(0, 20, "id"));
@@ -53,9 +51,9 @@ class ListUserUseCaseTest {
 
     @Test
     void testExecute_Paginated() {
-        User user1 = Owner.create(1L, UUID.randomUUID(), "John", "john@example.com", "john", true, null, null, Instant.now(), Instant.now());
-        User user2 = Owner.create(2L, UUID.randomUUID(), "Jane", "jane@example.com", "jane", true, null, null, Instant.now(), Instant.now());
-        User user3 = Owner.create(3L, UUID.randomUUID(), "Bob", "bob@example.com", "bob", true, null, null, Instant.now(), Instant.now());
+        User user1 = new User(1L, UUID.randomUUID(), "John", "john@example.com", "john", true, null, null, null);
+        User user2 = new User(2L, UUID.randomUUID(), "Jane", "jane@example.com", "jane", true, null, null, null);
+        User user3 = new User(3L, UUID.randomUUID(), "Bob", "bob@example.com", "bob", true, null, null, null);
         when(userGateway.findAll()).thenReturn(List.of(user1, user2, user3));
 
         PageResult<User> result = useCase.execute(new Pagination(1, 2, "id"));

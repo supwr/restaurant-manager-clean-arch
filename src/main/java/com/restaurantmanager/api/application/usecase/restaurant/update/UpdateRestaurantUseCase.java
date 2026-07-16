@@ -26,6 +26,7 @@ public class UpdateRestaurantUseCase {
 
 		final Restaurant updated = new Restaurant(
 			existing.getId(),
+			existing.getUuid(),
 			restaurant.getName(),
 			restaurant.getAddress(),
 			restaurant.getCuisineType(),
@@ -34,6 +35,11 @@ public class UpdateRestaurantUseCase {
 		);
 
 
-		return restaurantGateway.save(updated);
+		final Restaurant saved = restaurantGateway.save(updated);
+		if (saved == null || saved.getUuid() == null) {
+			return saved;
+		}
+
+		return restaurantGateway.findByUuid(saved.getUuid()).orElse(saved);
 	}
 }

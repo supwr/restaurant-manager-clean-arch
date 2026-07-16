@@ -3,7 +3,6 @@ package com.restaurantmanager.api.unit.application.usecase.user.delete;
 import com.restaurantmanager.api.application.gateway.UserGateway;
 import com.restaurantmanager.api.application.usecase.user.delete.DeleteUserUseCase;
 import com.restaurantmanager.api.domain.exception.EntityNotFoundException;
-import com.restaurantmanager.api.domain.model.Owner;
 import com.restaurantmanager.api.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,7 +10,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -36,7 +34,7 @@ class DeleteUserUseCaseTest {
     void testDeleteUser_Success() {
         UUID uuid = UUID.randomUUID();
         long userId = 1L;
-        User user = Owner.create(userId, uuid, "Test User", "test@example.com", "testuser", true, null, null, Instant.now(), Instant.now());
+        User user = new User(userId, uuid, "Test User", "test@example.com", "testuser", true, null, null, null);
 
         when(userGateway.findByUuid(uuid)).thenReturn(Optional.of(user));
 
