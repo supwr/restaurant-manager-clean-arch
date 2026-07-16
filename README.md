@@ -1,12 +1,12 @@
 # Restaurant Manager
 
-Sistema de gestão para restaurantes desenvolvido como Tech Challenge da fase, com foco em uma arquitetura Spring Boot contract-first, autenticação JWT, PostgreSQL e Flyway.
+Sistema de gestão para restaurantes desenvolvido como Tech Challenge da fase 2, com foco em uma arquitetura Spring Boot contract-first, Clean Architecture, PostgreSQL e Flyway.
 
 ## Descrição do projeto
 
 > TECH CHALLENGE
 >
-> O Tech Challenge é o projeto da fase que englobará os conhecimentos obtidos em todas as disciplinas da fase. Esta é uma atividade que, em princípio, deve ser desenvolvida em grupo. Importante atentar-se ao prazo de entrega, pois trata-se de uma atividade obrigatória, uma vez que vale pontos na composição da nota final.
+> O Tech Challenge é o projeto que englobará os conhecimentos obtidos em todas as disciplinas da fase. Esta é uma atividade que, em princípio, deve ser desenvolvida em grupo. Importante atentar-se ao prazo de entrega, pois trata-se de uma atividade obrigatória, uma vez que vale pontos na composição da nota final.
 >
 > O problema
 >
@@ -130,6 +130,10 @@ mvn clean test jacoco:report
 - Health check: `GET /actuator/health`
 - Documentação OpenAPI: `GET /v3/api-docs`
 - Swagger UI: `GET /swagger-ui.html`
+
+## Collection Postman
+
+[postman_collection_restaurant_manager.json](docs/postman_collection_restaurant_manager.json)
 
 ## Variáveis de ambiente principais
 
