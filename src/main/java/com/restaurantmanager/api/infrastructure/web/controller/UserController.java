@@ -49,6 +49,8 @@ public class UserController implements UsersApi {
 
     @Override
     public ResponseEntity<UserResponse> createUser(@Valid CreateUserRequest createUserRequest) {
+        final java.util.UUID typeUuid = createUserRequest.getType().getId();
+
         final User user = new User(
             null,
             null,
@@ -57,10 +59,11 @@ public class UserController implements UsersApi {
             createUserRequest.getLogin(),
             true,
             null,
+            null,
             null
         );
 
-        final User created = createUserUseCase.execute(user);
+        final User created = createUserUseCase.execute(typeUuid, user);
         return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.map(created));
     }
 
@@ -96,8 +99,9 @@ public class UserController implements UsersApi {
             null,
             null
         );
+        final java.util.UUID typeUuid = updateUserRequest.getType() != null ? updateUserRequest.getType().getId() : null;
 
-        final User updated = updateUserByUuidUseCase.execute(userId, user);
+        final User updated = updateUserByUuidUseCase.execute(userId, user, typeUuid);
         return ResponseEntity.ok(userMapper.map(updated));
     }
 }

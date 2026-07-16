@@ -1,9 +1,11 @@
 package com.restaurantmanager.api.application.usecase.user.update;
 
 import com.restaurantmanager.api.application.gateway.UserGateway;
+import com.restaurantmanager.api.application.gateway.UserTypeGateway;
 import com.restaurantmanager.api.domain.exception.EntityNotFoundException;
 import com.restaurantmanager.api.domain.exception.ValidationException;
 import com.restaurantmanager.api.domain.model.User;
+import com.restaurantmanager.api.domain.model.UserType;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -11,17 +13,26 @@ import java.util.UUID;
 public class UpdateUserUseCase {
 
 	private final UserGateway userGateway;
+	private final UserTypeGateway userTypeGateway;
 
-	public UpdateUserUseCase(final UserGateway userGateway) {
+	public UpdateUserUseCase(final UserGateway userGateway, final UserTypeGateway userTypeGateway) {
 		this.userGateway = Objects.requireNonNull(userGateway, "userGateway must not be null");
+		this.userTypeGateway = Objects.requireNonNull(userTypeGateway, "userTypeGateway must not be null");
 	}
 
-	public User execute(final UUID uuid, final User user) {
+	public User execute(final UUID uuid, final User user, final UUID userTypeUuid) {
 		Objects.requireNonNull(uuid, "uuid must not be null");
 		Objects.requireNonNull(user, "user must not be null");
 
 		final User existing = userGateway.findByUuid(uuid)
 			.orElseThrow(() -> new EntityNotFoundException("User", uuid.toString()));
+
+		// If userTypeUuid provided, resolve and set
+		if (userTypeUuid != null) {
+			final UserType userType = userTypeGateway.findByUuid(userTypeUuid)
+				.orElseThrow(() -> new EntityNotFoundException("UserType", userTypeUuid.toString()));
+			user.setUserType(userType);
+		}
 
 		validateUpdatableFields(user);
 
@@ -42,7 +53,7 @@ public class UpdateUserUseCase {
 			user.getEmail() != null ? user.getEmail() : existing.getEmail(),
 			user.getLogin() != null ? user.getLogin() : existing.getLogin(),
 			existing.getActive(),
-			existing.getUserType(),
+			user.getUserType() != null ? user.getUserType() : existing.getUserType(),
 			existing.getCreatedAt(),
 			existing.getUpdatedAt()
 		);
@@ -61,5 +72,5 @@ public class UpdateUserUseCase {
 			throw new ValidationException("login", user.getLogin(), "User login must not be blank");
 		}
 	}
-}
 
+}

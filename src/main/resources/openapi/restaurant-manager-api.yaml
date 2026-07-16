@@ -524,10 +524,6 @@ components:
         name:
           type: string
           example: OWNER
-        observation:
-          type: string
-          nullable: true
-          example: Administrator user
       required: [ name ]
     UserTypeResponse:
       type: object
@@ -538,10 +534,6 @@ components:
         name:
           type: string
           example: OWNER
-        observation:
-          type: string
-          nullable: true
-          example: Administrator user
     RestaurantRequest:
       type: object
       properties:
@@ -653,7 +645,7 @@ components:
           type: string
           example: john.doe
         type:
-          $ref: '#/components/schemas/UserType'
+          $ref: '#/components/schemas/UserTypeRef'
       required: [ name, email, login, type ]
     UpdateUserRequest:
       type: object
@@ -665,6 +657,11 @@ components:
           type: string
           format: email
           example: john.doe@example.com
+        login:
+          type: string
+          example: john.doe
+        type:
+          $ref: '#/components/schemas/UserTypeRef'
     Address:
       type: object
       properties:
@@ -691,6 +688,14 @@ components:
         name:
           type: string
           example: OWNER
+    UserTypeRef:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+      required: [ id ]
     OwnerRequest:
       type: object
       properties:

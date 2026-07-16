@@ -32,8 +32,8 @@ import org.springframework.context.annotation.Configuration;
 public class BeanConfiguration {
 
     @Bean
-    public CreateUserUseCase createUserUseCase(final UserGateway userGateway) {
-        return new CreateUserUseCase(userGateway);
+    public CreateUserUseCase createUserUseCase(final UserGateway userGateway, final UserTypeGateway userTypeGateway) {
+        return new CreateUserUseCase(userGateway, userTypeGateway);
     }
 
     @Bean
@@ -47,8 +47,8 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public UpdateUserUseCase updateUserUseCase(final UserGateway userGateway) {
-        return new UpdateUserUseCase(userGateway);
+    public UpdateUserUseCase updateUserUseCase(final UserGateway userGateway, final UserTypeGateway userTypeGateway) {
+        return new UpdateUserUseCase(userGateway, userTypeGateway);
     }
 
     @Bean
@@ -67,8 +67,8 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public UpdateUserUseCase updateUserByUuidUseCase(final UserGateway userGateway) {
-        return new UpdateUserUseCase(userGateway);
+    public UpdateUserUseCase updateUserByUuidUseCase(final UserGateway userGateway, final UserTypeGateway userTypeGateway) {
+        return new UpdateUserUseCase(userGateway, userTypeGateway);
     }
 
     @Bean
