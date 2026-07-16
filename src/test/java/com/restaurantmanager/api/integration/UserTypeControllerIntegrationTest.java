@@ -40,7 +40,6 @@ class UserTypeControllerIntegrationTest {
     void testCreateUserType_Success() throws Exception {
         UserTypeRequest request = new UserTypeRequest();
         request.setName("Admin");
-        request.observation("Administrator role");
 
         mockMvc.perform(post("/api/v1/user-types")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -56,7 +55,6 @@ class UserTypeControllerIntegrationTest {
         // Create a user type first
         UserTypeRequest request = new UserTypeRequest();
         request.setName("Manager");
-        request.observation("Manager role");
 
         mockMvc.perform(post("/api/v1/user-types")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -74,7 +72,6 @@ class UserTypeControllerIntegrationTest {
     void testGetUserTypeByUuid_Success() throws Exception {
         UserTypeRequest request = new UserTypeRequest();
         request.setName("User");
-        request.observation("Regular user role");
 
         MvcResult createResult = mockMvc.perform(post("/api/v1/user-types")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -95,7 +92,6 @@ class UserTypeControllerIntegrationTest {
     void testUpdateUserType_Success() throws Exception {
         UserTypeRequest request = new UserTypeRequest();
         request.setName("Guest");
-        request.observation("Guest role");
 
         MvcResult createResult = mockMvc.perform(post("/api/v1/user-types")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -108,7 +104,6 @@ class UserTypeControllerIntegrationTest {
 
         UserTypeRequest updateRequest = new UserTypeRequest();
         updateRequest.setName("Premium Guest");
-        updateRequest.observation("Premium guest role with special privileges");
 
         mockMvc.perform(put("/api/v1/user-types/{userTypeUuid}", uuid)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -122,7 +117,6 @@ class UserTypeControllerIntegrationTest {
     void testDeleteUserType_Success() throws Exception {
         UserTypeRequest request = new UserTypeRequest();
         request.setName("Temp User");
-        request.observation("Temporary user role");
 
         MvcResult createResult = mockMvc.perform(post("/api/v1/user-types")
                 .contentType(MediaType.APPLICATION_JSON)
