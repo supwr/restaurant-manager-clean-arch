@@ -1,10 +1,13 @@
 package com.restaurantmanager.api.infrastructure.persistence.entity;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -35,8 +38,9 @@ public class RestaurantEntity {
     @Column(nullable = false, length = 200)
     private String openingHours;
 
-    @Column(nullable = false)
-    private Long ownerUserId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "owner_user_id", nullable = false)
+    private UserEntity ownerUser;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -92,12 +96,27 @@ public class RestaurantEntity {
         this.openingHours = openingHours;
     }
 
+    public UserEntity getOwnerUser() {
+        return ownerUser;
+    }
+
+    public void setOwnerUser(final UserEntity ownerUser) {
+        this.ownerUser = ownerUser;
+    }
+
     public Long getOwnerUserId() {
-        return ownerUserId;
+        return ownerUser == null ? null : ownerUser.getId();
     }
 
     public void setOwnerUserId(final Long ownerUserId) {
-        this.ownerUserId = ownerUserId;
+        if (ownerUserId == null) {
+            this.ownerUser = null;
+            return;
+        }
+
+        final UserEntity owner = new UserEntity();
+        owner.setId(ownerUserId);
+        this.ownerUser = owner;
     }
 
     public LocalDateTime getCreatedAt() {

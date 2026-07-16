@@ -16,7 +16,8 @@ CREATE TABLE IF NOT EXISTS "restaurant-manager".restaurants (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
-    CONSTRAINT restaurants_pkey         PRIMARY KEY (id),
+    CONSTRAINT restaurants_pkey PRIMARY KEY (id),
+    CONSTRAINT fk_owner_user_id FOREIGN KEY (owner_user_id) REFERENCES "restaurant-manager".users(id),
     CONSTRAINT restaurants_uuid_unique UNIQUE (uuid)
 );
 

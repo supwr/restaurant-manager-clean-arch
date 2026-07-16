@@ -10,6 +10,7 @@ import com.restaurantmanager.api.domain.model.Pagination;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 public class ListMenuItemsUseCase {
 
@@ -24,13 +25,14 @@ public class ListMenuItemsUseCase {
 		this.restaurantGateway = Objects.requireNonNull(restaurantGateway);
 	}
 
-	public PageResult<MenuItem> execute(final Long restaurantId, final Pagination pagination) {
-		Objects.requireNonNull(restaurantId);
+	public PageResult<MenuItem> execute(final UUID restaurantUuid, final Pagination pagination) {
+		Objects.requireNonNull(restaurantUuid);
 		Objects.requireNonNull(pagination);
 
-		if (!restaurantGateway.existsById(restaurantId)) {
-			throw new EntityNotFoundException("Restaurant", restaurantId.toString());
-		}
+		final Long restaurantId = restaurantGateway.findByUuid(restaurantUuid)
+			.orElseThrow(() -> new EntityNotFoundException("Restaurant", restaurantUuid.toString()))
+			.getId();
+
 		if (pagination.getSize() <= 0) {
 			throw new ValidationException("size", pagination.getSize(), "Page size must be greater than zero");
 		}
@@ -42,6 +44,7 @@ public class ListMenuItemsUseCase {
 		final int toIndex = Math.min(fromIndex + pageSize, menuItems.size());
 		final List<MenuItem> content = fromIndex >= toIndex ? List.of() : List.copyOf(menuItems.subList(fromIndex, toIndex));
 		final int totalPages = menuItems.isEmpty() ? 0 : (int) Math.ceil((double) menuItems.size() / pageSize);
+
 
 		return new PageResult<>(content, pageNumber, pageSize, (long) menuItems.size(), totalPages);
 	}

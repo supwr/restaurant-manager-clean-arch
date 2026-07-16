@@ -13,9 +13,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.UUID;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -32,14 +34,20 @@ class UserControllerIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     private CreateUserRequest validRequest;
 
     @BeforeEach
     void setUp() {
+        seedDefaultUserTypes();
+
+        final String suffix = UUID.randomUUID().toString().substring(0, 8);
         validRequest = new CreateUserRequest();
-        validRequest.setName("Test User");
-        validRequest.setEmail("testuser@example.com");
-        validRequest.setLogin("testuser");
+        validRequest.setName("Test User " + suffix);
+        validRequest.setEmail("testuser-" + suffix + "@example.com");
+        validRequest.setLogin("testuser-" + suffix);
         UserType userType = new UserType();
         userType.setName("OWNER");
         validRequest.setType(userType);
@@ -51,11 +59,13 @@ class UserControllerIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(validRequest)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name", equalTo("Test User")))
-                .andExpect(jsonPath("$.email", equalTo("testuser@example.com")))
-                .andExpect(jsonPath("$.login", equalTo("testuser")))
+                .andExpect(jsonPath("$.name", equalTo(validRequest.getName())))
+                .andExpect(jsonPath("$.email", equalTo(validRequest.getEmail())))
+                .andExpect(jsonPath("$.login", equalTo(validRequest.getLogin())))
                 .andExpect(jsonPath("$.uuid").exists())
-                .andExpect(jsonPath("$.id").exists());
+                .andExpect(jsonPath("$.type.uuid").exists())
+                .andExpect(jsonPath("$.type.name", equalTo("OWNER")))
+                .andExpect(jsonPath("$.id").doesNotExist());
     }
 
     @Test
@@ -91,9 +101,11 @@ class UserControllerIntegrationTest {
         // Get user by uuid
         mockMvc.perform(get("/api/v1/users/{uuid}", uuid))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", equalTo("Test User")))
+                .andExpect(jsonPath("$.name", equalTo(validRequest.getName())))
                 .andExpect(jsonPath("$.uuid", equalTo(uuid)))
-                .andExpect(jsonPath("$.email", equalTo("testuser@example.com")));
+                .andExpect(jsonPath("$.email", equalTo(validRequest.getEmail())))
+                .andExpect(jsonPath("$.type.uuid").exists())
+                .andExpect(jsonPath("$.type.name", equalTo("OWNER")));
     }
 
     @Test
@@ -168,6 +180,12 @@ class UserControllerIntegrationTest {
             return matcher.group(1);
         }
         return null;
+    }
+
+    private void seedDefaultUserTypes() {
+        jdbcTemplate.update("merge into user_types (id, uuid, name, created_at, updated_at) key(id) values (?, random_uuid(), ?, current_timestamp, current_timestamp)", 1L, "OWNER");
+        jdbcTemplate.update("merge into user_types (id, uuid, name, created_at, updated_at) key(id) values (?, random_uuid(), ?, current_timestamp, current_timestamp)", 2L, "CUSTOMER");
+        jdbcTemplate.execute("alter table user_types alter column id restart with 3");
     }
 }
 

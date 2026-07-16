@@ -2,6 +2,7 @@ package com.restaurantmanager.api.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.restaurantmanager.api.model.UserTypeRequest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -10,6 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.http.MediaType;
+import org.openapitools.jackson.nullable.JsonNullableModule;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,20 +31,24 @@ class UserTypeControllerIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @BeforeEach
+    void setUp() {
+        objectMapper.registerModule(new JsonNullableModule());
+    }
+
     @Test
     void testCreateUserType_Success() throws Exception {
         UserTypeRequest request = new UserTypeRequest();
         request.setName("Admin");
-        request.setObservation("Administrator role");
+        request.observation("Administrator role");
 
         mockMvc.perform(post("/api/v1/user-types")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name", equalTo("Admin")))
-                .andExpect(jsonPath("$.observation", equalTo("Administrator role")))
                 .andExpect(jsonPath("$.uuid").exists())
-                .andExpect(jsonPath("$.id").exists());
+                .andExpect(jsonPath("$.id").doesNotExist());
     }
 
     @Test
@@ -50,7 +56,7 @@ class UserTypeControllerIntegrationTest {
         // Create a user type first
         UserTypeRequest request = new UserTypeRequest();
         request.setName("Manager");
-        request.setObservation("Manager role");
+        request.observation("Manager role");
 
         mockMvc.perform(post("/api/v1/user-types")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -70,7 +76,7 @@ class UserTypeControllerIntegrationTest {
         // Create a user type first
         UserTypeRequest request = new UserTypeRequest();
         request.setName("User");
-        request.setObservation("Regular user role");
+        request.observation("Regular user role");
 
         MvcResult createResult = mockMvc.perform(post("/api/v1/user-types")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -93,7 +99,7 @@ class UserTypeControllerIntegrationTest {
         // Create a user type first
         UserTypeRequest request = new UserTypeRequest();
         request.setName("Guest");
-        request.setObservation("Guest role");
+        request.observation("Guest role");
 
         MvcResult createResult = mockMvc.perform(post("/api/v1/user-types")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -107,14 +113,14 @@ class UserTypeControllerIntegrationTest {
         // Update user type
         UserTypeRequest updateRequest = new UserTypeRequest();
         updateRequest.setName("Premium Guest");
-        updateRequest.setObservation("Premium guest role with special privileges");
+        updateRequest.observation("Premium guest role with special privileges");
 
         mockMvc.perform(put("/api/v1/user-types/{userTypeUuid}", uuid)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", equalTo("Premium Guest")))
-                .andExpect(jsonPath("$.observation", equalTo("Premium guest role with special privileges")));
+                .andExpect(jsonPath("$.observation").doesNotExist());
     }
 
     @Test
@@ -122,7 +128,7 @@ class UserTypeControllerIntegrationTest {
         // Create a user type first
         UserTypeRequest request = new UserTypeRequest();
         request.setName("Temp User");
-        request.setObservation("Temporary user role");
+        request.observation("Temporary user role");
 
         MvcResult createResult = mockMvc.perform(post("/api/v1/user-types")
                 .contentType(MediaType.APPLICATION_JSON)

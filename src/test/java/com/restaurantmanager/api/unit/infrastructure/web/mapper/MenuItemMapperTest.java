@@ -4,6 +4,7 @@ import com.restaurantmanager.api.domain.model.MenuItem;
 import com.restaurantmanager.api.infrastructure.web.mapper.MenuItemMapper;
 import com.restaurantmanager.api.model.MenuItemRequest;
 import com.restaurantmanager.api.model.MenuItemResponse;
+import com.restaurantmanager.api.model.RelatedRestaurant;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
@@ -20,10 +21,13 @@ class MenuItemMapperTest {
     void testMapDomainToResponse() {
         MenuItem domain = new MenuItem(1L, UUID.randomUUID(), 10L, "Pizza", "Tasty", new BigDecimal("10.50"), true, "/pizza");
 
-        MenuItemResponse response = mapper.map(domain);
+        RelatedRestaurant restaurant = new RelatedRestaurant();
+        restaurant.setId(UUID.randomUUID());
+        restaurant.setName("Restaurant");
+        MenuItemResponse response = mapper.map(domain, restaurant);
 
         assertNotNull(response);
-        assertEquals(1L, response.getId());
+        assertEquals(restaurant, response.getRestaurant());
         assertEquals("Pizza", response.getName());
         assertEquals(new BigDecimal("10.50"), response.getPrice());
     }

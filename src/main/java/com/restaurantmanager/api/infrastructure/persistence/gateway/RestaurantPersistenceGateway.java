@@ -5,11 +5,13 @@ import com.restaurantmanager.api.domain.model.Restaurant;
 import com.restaurantmanager.api.infrastructure.persistence.mapper.RestaurantPersistenceMapper;
 import com.restaurantmanager.api.infrastructure.persistence.repository.RestaurantRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Component
+@Transactional(readOnly = true)
 public class RestaurantPersistenceGateway implements RestaurantGateway {
 
     private final RestaurantRepository repository;
@@ -21,6 +23,7 @@ public class RestaurantPersistenceGateway implements RestaurantGateway {
     }
 
     @Override
+    @Transactional
     public Restaurant save(final Restaurant restaurant) {
         return mapper.toDomain(repository.save(mapper.toEntity(restaurant)));
     }
@@ -41,8 +44,15 @@ public class RestaurantPersistenceGateway implements RestaurantGateway {
     }
 
     @Override
+    @Transactional
     public void deleteById(final Long id) {
         repository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public void deleteByUuid(final java.util.UUID uuid) {
+        repository.deleteByUuid(uuid);
     }
 
     @Override

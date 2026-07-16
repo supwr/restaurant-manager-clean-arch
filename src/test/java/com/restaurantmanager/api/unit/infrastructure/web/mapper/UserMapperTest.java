@@ -6,6 +6,7 @@ import com.restaurantmanager.api.domain.model.Owner;
 import com.restaurantmanager.api.domain.model.User;
 import com.restaurantmanager.api.infrastructure.web.mapper.UserMapper;
 import com.restaurantmanager.api.model.UserResponse;
+import com.restaurantmanager.api.model.UserType;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
@@ -25,14 +26,19 @@ class UserMapperTest {
         Instant updatedAt = Instant.parse("2026-01-02T10:00:00Z");
         Address address = new Address("Street", 10L, "City", "12345");
         User user = Owner.create(1L, uuid, "Owner", "owner@example.com", "owner", true, null, address, createdAt, updatedAt);
+        UserType type = new UserType();
+        UUID typeUuid = UUID.randomUUID();
+        type.setUuid(typeUuid);
+        type.setName("OWNER");
 
-        UserResponse response = mapper.map(user);
+        UserResponse response = mapper.map(user, type);
 
         assertNotNull(response);
         assertEquals(uuid, response.getUuid());
         assertEquals("Owner", response.getName());
         assertEquals("owner@example.com", response.getEmail());
         assertEquals("OWNER", response.getType().getName());
+        assertEquals(typeUuid, response.getType().getUuid());
     }
 
     @Test

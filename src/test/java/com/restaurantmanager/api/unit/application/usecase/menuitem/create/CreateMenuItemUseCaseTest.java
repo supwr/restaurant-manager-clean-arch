@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
+import com.restaurantmanager.api.domain.model.Restaurant;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -38,22 +39,28 @@ class CreateMenuItemUseCaseTest {
 
     @Test
     void testExecute_Success() {
-        MenuItem menuItem = new MenuItem(null, 1L, "Pizza", "Tasty", new BigDecimal("10.50"), true, "/pizza");
-        when(restaurantGateway.existsById(1L)).thenReturn(true);
-        when(menuItemGateway.save(menuItem)).thenReturn(menuItem);
+        final UUID restaurantUuid = UUID.randomUUID();
+        final Restaurant restaurant = new Restaurant(1L, restaurantUuid, "R", "A", "C", "9AM", 1L);
 
-        MenuItem result = useCase.execute(menuItem);
+        MenuItem input = new MenuItem(null, 1L, "Pizza", "Tasty", new BigDecimal("10.50"), true, "/pizza");
+        MenuItem saved = new MenuItem(1L, UUID.randomUUID(), 1L, "Pizza", "Tasty", new BigDecimal("10.50"), true, "/pizza");
+
+        when(restaurantGateway.findByUuid(restaurantUuid)).thenReturn(Optional.of(restaurant));
+        when(menuItemGateway.save(any(MenuItem.class))).thenReturn(saved);
+
+        MenuItem result = useCase.execute(restaurantUuid, input);
 
         assertNotNull(result);
-        verify(menuItemGateway).save(menuItem);
+        verify(menuItemGateway).save(any(MenuItem.class));
     }
 
     @Test
     void testExecute_RestaurantNotFound() {
-        MenuItem menuItem = new MenuItem(null, 1L, "Pizza", "Tasty", new BigDecimal("10.50"), true, "/pizza");
-        when(restaurantGateway.existsById(1L)).thenReturn(false);
+        final UUID restaurantUuid = UUID.randomUUID();
+        MenuItem input = new MenuItem(null, 1L, "Pizza", "Tasty", new BigDecimal("10.50"), true, "/pizza");
+        when(restaurantGateway.findByUuid(restaurantUuid)).thenReturn(Optional.empty());
 
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> useCase.execute(menuItem));
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> useCase.execute(restaurantUuid, input));
 
         assertTrue(exception.getMessage().contains("Restaurant"));
         verify(menuItemGateway, never()).save(any());
@@ -61,16 +68,19 @@ class CreateMenuItemUseCaseTest {
 
     @Test
     void testExecute_InvalidMenuItem() {
-        MenuItem menuItem = new MenuItem(null, 1L, "", "Tasty", new BigDecimal("10.50"), true, "/pizza");
-        when(restaurantGateway.existsById(1L)).thenReturn(true);
+        final UUID restaurantUuid = UUID.randomUUID();
+        final Restaurant restaurant = new Restaurant(1L, restaurantUuid, "R", "A", "C", "9AM", 1L);
 
-        assertThrows(ValidationException.class, () -> useCase.execute(menuItem));
+        MenuItem menuItem = new MenuItem(null, 1L, "", "Tasty", new BigDecimal("10.50"), true, "/pizza");
+        when(restaurantGateway.findByUuid(restaurantUuid)).thenReturn(Optional.of(restaurant));
+
+        assertThrows(ValidationException.class, () -> useCase.execute(restaurantUuid, menuItem));
         verify(menuItemGateway, never()).save(any());
     }
 
     @Test
     void testExecute_NullRestaurantIdValidation() {
-        assertThrows(NullPointerException.class, () -> useCase.execute(null));
+        assertThrows(NullPointerException.class, () -> useCase.execute(null, null));
         verify(menuItemGateway, never()).save(any());
     }
 }

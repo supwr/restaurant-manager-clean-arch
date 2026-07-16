@@ -6,6 +6,7 @@ import com.restaurantmanager.api.model.UserTypeRequest;
 import com.restaurantmanager.api.model.UserTypeResponse;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
+import org.openapitools.jackson.nullable.JsonNullable;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,12 +16,13 @@ class UserTypeMapperTest {
 
     @Test
     void testMapDomainToResponse() {
-        UserType domain = new UserType(1L, java.util.UUID.randomUUID(), "ADMIN", "Administrator");
+        java.util.UUID uuid = java.util.UUID.randomUUID();
+        UserType domain = new UserType(1L, uuid, "ADMIN", "Administrator");
 
         UserTypeResponse response = mapper.map(domain);
 
         assertNotNull(response);
-        assertEquals(1L, response.getId());
+        assertEquals(uuid, response.getUuid());
         assertEquals("ADMIN", response.getName());
     }
 
@@ -28,7 +30,7 @@ class UserTypeMapperTest {
     void testMapRequestToDomain() {
         UserTypeRequest request = new UserTypeRequest();
         request.setName("CUSTOMER");
-        request.setObservation("Customer role");
+        request.setObservation(JsonNullable.of("Customer role"));
 
         UserType domain = mapper.map(request);
 
@@ -41,7 +43,7 @@ class UserTypeMapperTest {
     void testMapRequestToUpdateDomain() {
         UserTypeRequest request = new UserTypeRequest();
         request.setName("MANAGER");
-        request.setObservation("Manager role");
+        request.setObservation(JsonNullable.of("Manager role"));
 
         UserType domain = mapper.map(10L, request);
 

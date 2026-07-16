@@ -5,6 +5,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -24,8 +27,9 @@ public class MenuItemEntity {
     @Column(nullable = false, unique = true, updatable = false)
     private UUID uuid;
 
-    @Column(name = "restaurant_id", nullable = false)
-    private Long restaurantId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "restaurant_id", nullable = false)
+    private RestaurantEntity restaurant;
 
     @Column(nullable = false, length = 200)
     private String name;
@@ -65,11 +69,26 @@ public class MenuItemEntity {
     }
 
     public Long getRestaurantId() {
-        return restaurantId;
+        return restaurant == null ? null : restaurant.getId();
     }
 
     public void setRestaurantId(final Long restaurantId) {
-        this.restaurantId = restaurantId;
+        if (restaurantId == null) {
+            this.restaurant = null;
+            return;
+        }
+
+        final RestaurantEntity restaurantEntity = new RestaurantEntity();
+        restaurantEntity.setId(restaurantId);
+        this.restaurant = restaurantEntity;
+    }
+
+    public RestaurantEntity getRestaurant() {
+        return restaurant;
+    }
+
+    public void setRestaurant(final RestaurantEntity restaurant) {
+        this.restaurant = restaurant;
     }
 
     public String getName() {

@@ -5,6 +5,9 @@ import com.restaurantmanager.api.application.gateway.RestaurantGateway;
 import com.restaurantmanager.api.domain.exception.EntityNotFoundException;
 import com.restaurantmanager.api.domain.model.MenuItem;
 
+import java.util.Objects;
+import java.util.UUID;
+
 public class CreateMenuItemUseCase {
 
     private final MenuItemGateway menuItemGateway;
@@ -18,12 +21,25 @@ public class CreateMenuItemUseCase {
         this.restaurantGateway = restaurantGateway;
     }
 
-    public MenuItem execute(final MenuItem menuItem) {
-        if (!restaurantGateway.existsById(menuItem.getRestaurantId())) {
-            throw new EntityNotFoundException("Restaurant", menuItem.getRestaurantId().toString());
-        }
+    public MenuItem execute(final UUID restaurantUuid, final MenuItem menuItem) {
+        Objects.requireNonNull(restaurantUuid);
+        Objects.requireNonNull(menuItem);
 
-        menuItem.validate();
-        return menuItemGateway.save(menuItem);
+        final Long restaurantId = restaurantGateway.findByUuid(restaurantUuid)
+            .orElseThrow(() -> new EntityNotFoundException("Restaurant", restaurantUuid.toString()))
+            .getId();
+
+        final MenuItem itemToSave = new MenuItem(
+            null,
+            restaurantId,
+            menuItem.getName(),
+            menuItem.getDescription(),
+            menuItem.getPrice(),
+            menuItem.getLocalOnly(),
+            menuItem.getPhotoPath()
+        );
+
+        itemToSave.validate();
+        return menuItemGateway.save(itemToSave);
     }
 }

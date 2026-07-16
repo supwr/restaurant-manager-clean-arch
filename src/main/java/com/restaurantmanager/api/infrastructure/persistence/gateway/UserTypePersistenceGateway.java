@@ -5,12 +5,14 @@ import com.restaurantmanager.api.domain.model.UserType;
 import com.restaurantmanager.api.infrastructure.persistence.mapper.UserTypePersistenceMapper;
 import com.restaurantmanager.api.infrastructure.persistence.repository.UserTypeRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Component
+@Transactional(readOnly = true)
 public class UserTypePersistenceGateway implements UserTypeGateway {
 
     private final UserTypeRepository repository;
@@ -22,6 +24,7 @@ public class UserTypePersistenceGateway implements UserTypeGateway {
     }
 
     @Override
+    @Transactional
     public UserType save(final UserType userType) {
         return mapper.toDomain(repository.save(mapper.toEntity(userType)));
     }
@@ -47,6 +50,7 @@ public class UserTypePersistenceGateway implements UserTypeGateway {
     }
 
     @Override
+    @Transactional
     public void deleteById(final Long id) {
         repository.deleteById(id);
     }

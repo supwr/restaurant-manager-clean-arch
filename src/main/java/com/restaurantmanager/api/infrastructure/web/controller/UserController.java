@@ -5,16 +5,18 @@ import com.restaurantmanager.api.model.CreateUserRequest;
 import com.restaurantmanager.api.model.UpdateUserRequest;
 import com.restaurantmanager.api.model.UserResponse;
 import com.restaurantmanager.api.application.usecase.user.create.CreateUserUseCase;
-import com.restaurantmanager.api.application.usecase.user.get.GetUserByUuidUseCase;
+import com.restaurantmanager.api.application.usecase.user.get.GetUserUseCase;
 import com.restaurantmanager.api.application.usecase.user.list.ListUserCase;
-import com.restaurantmanager.api.application.usecase.user.update.UpdateUserByUuidUseCase;
-import com.restaurantmanager.api.application.usecase.user.delete.DeleteUserByUuidUseCase;
+import com.restaurantmanager.api.application.usecase.user.update.UpdateUserUseCase;
+import com.restaurantmanager.api.application.usecase.user.delete.DeleteUserUseCase;
 import com.restaurantmanager.api.infrastructure.web.mapper.UserMapper;
 import com.restaurantmanager.api.domain.model.Pagination;
 import com.restaurantmanager.api.domain.model.User;
 import com.restaurantmanager.api.domain.model.Address;
 import com.restaurantmanager.api.domain.model.Owner;
 import com.restaurantmanager.api.domain.model.Customer;
+import com.restaurantmanager.api.application.gateway.UserTypeGateway;
+import com.restaurantmanager.api.domain.exception.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,19 +30,21 @@ import java.util.UUID;
 public class UserController implements UsersApi {
 
     private final CreateUserUseCase createUserUseCase;
-    private final GetUserByUuidUseCase getUserByUuidUseCase;
+    private final GetUserUseCase getUserByUuidUseCase;
     private final ListUserCase listUserCase;
-    private final UpdateUserByUuidUseCase updateUserByUuidUseCase;
-    private final DeleteUserByUuidUseCase deleteUserByUuidUseCase;
+    private final UpdateUserUseCase updateUserByUuidUseCase;
+    private final DeleteUserUseCase deleteUserByUuidUseCase;
     private final UserMapper userMapper;
+    private final UserTypeGateway userTypeGateway;
 
     public UserController(
             final CreateUserUseCase createUserUseCase,
-            final GetUserByUuidUseCase getUserByUuidUseCase,
+            final GetUserUseCase getUserByUuidUseCase,
             final ListUserCase listUserCase,
-            final UpdateUserByUuidUseCase updateUserByUuidUseCase,
-            final DeleteUserByUuidUseCase deleteUserByUuidUseCase,
-            final UserMapper userMapper
+            final UpdateUserUseCase updateUserByUuidUseCase,
+            final DeleteUserUseCase deleteUserByUuidUseCase,
+            final UserMapper userMapper,
+            final UserTypeGateway userTypeGateway
     ) {
         this.createUserUseCase = Objects.requireNonNull(createUserUseCase);
         this.getUserByUuidUseCase = Objects.requireNonNull(getUserByUuidUseCase);
@@ -48,6 +52,7 @@ public class UserController implements UsersApi {
         this.updateUserByUuidUseCase = Objects.requireNonNull(updateUserByUuidUseCase);
         this.deleteUserByUuidUseCase = Objects.requireNonNull(deleteUserByUuidUseCase);
         this.userMapper = Objects.requireNonNull(userMapper);
+        this.userTypeGateway = Objects.requireNonNull(userTypeGateway);
     }
 
     @Override
@@ -55,7 +60,7 @@ public class UserController implements UsersApi {
         final User user = toDomain(createUserRequest);
 
         final User created = createUserUseCase.execute(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.map(created));
+        return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(created));
     }
 
     @Override
@@ -67,16 +72,14 @@ public class UserController implements UsersApi {
     @Override
     public ResponseEntity<UserResponse> getUserById(UUID userId) {
         final User user = getUserByUuidUseCase.execute(userId);
-        return ResponseEntity.ok(userMapper.map(user));
+        return ResponseEntity.ok(toResponse(user));
     }
 
     @Override
     public ResponseEntity<List<UserResponse>> listUsers(String name, Integer page, Integer size) {
-        final int p = page == null ? 0 : page;
-        final int s = size == null ? 20 : size;
-        final Pagination pagination = new Pagination(p, s, "id");
+        final var pagination = new Pagination(page, size, "name");
         final var pageResult = listUserCase.execute(pagination);
-        final List<UserResponse> content = pageResult.getContent().stream().map(userMapper::map).toList();
+        final List<UserResponse> content = pageResult.getContent().stream().map(this::toResponse).toList();
         return ResponseEntity.ok(content);
     }
 
@@ -96,7 +99,27 @@ public class UserController implements UsersApi {
         );
 
         final User updated = updateUserByUuidUseCase.execute(userId, user);
-        return ResponseEntity.ok(userMapper.map(updated));
+        return ResponseEntity.ok(toResponse(updated));
+    }
+
+    private UserResponse toResponse(final User user) {
+        return userMapper.map(user, resolveType(user));
+    }
+
+    private com.restaurantmanager.api.model.UserType resolveType(final User user) {
+        final String typeName = switch (user.getClass().getSimpleName()) {
+            case "Owner" -> User.OWNER_TYPE;
+            case "Customer" -> User.CUSTOMER_TYPE;
+            default -> throw new IllegalArgumentException("Unsupported user subtype: " + user.getClass().getName());
+        };
+
+        final com.restaurantmanager.api.domain.model.UserType userType = userTypeGateway.findByName(typeName)
+            .orElseThrow(() -> new EntityNotFoundException("UserType", typeName));
+
+        final com.restaurantmanager.api.model.UserType responseType = new com.restaurantmanager.api.model.UserType();
+        responseType.setUuid(userType.getUuid());
+        responseType.setName(userType.getName());
+        return responseType;
     }
 
     private User toDomain(final CreateUserRequest request) {

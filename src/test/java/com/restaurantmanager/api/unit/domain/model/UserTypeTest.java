@@ -56,7 +56,7 @@ class UserTypeTest {
 
     @Test
     void testUserTypeValidate_NullName() {
-        UserType userType = new UserType(1L, null, "Administrator");
+        UserType userType = new UserType(1L, UUID.randomUUID(), null);
 
         ValidationException exception = assertThrows(ValidationException.class, userType::validate);
         assertEquals("name", exception.getField());

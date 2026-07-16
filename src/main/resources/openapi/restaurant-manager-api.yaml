@@ -524,19 +524,24 @@ components:
         name:
           type: string
           example: OWNER
+        observation:
+          type: string
+          nullable: true
+          example: Administrator user
       required: [ name ]
     UserTypeResponse:
       type: object
       properties:
-        id:
-          type: integer
-          format: int64
         uuid:
           type: string
           format: uuid
         name:
           type: string
           example: OWNER
+        observation:
+          type: string
+          nullable: true
+          example: Administrator user
     RestaurantRequest:
       type: object
       properties:
@@ -552,16 +557,13 @@ components:
         openingHours:
           type: string
           example: Mon-Fri 09:00-18:00
-        ownerUserId:
-          type: integer
-          format: int64
-      required: [ name, address, cuisineType, openingHours, ownerUserId ]
+        ownerUserUuid:
+          type: string
+          format: uuid
+      required: [ name, address, cuisineType, openingHours, ownerUserUuid ]
     RestaurantResponse:
       type: object
       properties:
-        id:
-          type: integer
-          format: int64
         uuid:
           type: string
           format: uuid
@@ -573,9 +575,8 @@ components:
           type: string
         openingHours:
           type: string
-        ownerUserId:
-          type: integer
-          format: int64
+        ownerUser:
+          $ref: '#/components/schemas/RelatedUser'
     MenuItemRequest:
       type: object
       properties:
@@ -598,18 +599,11 @@ components:
     MenuItemResponse:
       type: object
       properties:
-        id:
-          type: integer
-          format: int64
         uuid:
           type: string
           format: uuid
-        restaurantId:
-          type: integer
-          format: int64
-        restaurantUuid:
-          type: string
-          format: uuid
+        restaurant:
+          $ref: '#/components/schemas/RelatedRestaurant'
         name:
           type: string
         description:
@@ -698,6 +692,26 @@ components:
         name:
           type: string
           example: OWNER
+    RelatedRestaurant:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Restaurant UUID
+        name:
+          type: string
+          description: Restaurant name
+    RelatedUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: User UUID
+        name:
+          type: string
+          description: User name
     ProblemDetail:
       type: object
       properties:

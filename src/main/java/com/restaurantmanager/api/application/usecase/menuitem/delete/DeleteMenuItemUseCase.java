@@ -5,6 +5,7 @@ import com.restaurantmanager.api.application.gateway.RestaurantGateway;
 import com.restaurantmanager.api.domain.exception.EntityNotFoundException;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class DeleteMenuItemUseCase {
 
@@ -16,21 +17,21 @@ public class DeleteMenuItemUseCase {
 		this.restaurantGateway = Objects.requireNonNull(restaurantGateway);
 	}
 
-	public void execute(final Long restaurantId, final Long id) {
-		Objects.requireNonNull(restaurantId);
-		Objects.requireNonNull(id);
+	public void execute(final UUID restaurantUuid, final UUID menuItemUuid) {
+		Objects.requireNonNull(restaurantUuid);
+		Objects.requireNonNull(menuItemUuid);
 
-		if (!restaurantGateway.existsById(restaurantId)) {
-			throw new EntityNotFoundException("Restaurant", restaurantId.toString());
-		}
+		final Long restaurantId = restaurantGateway.findByUuid(restaurantUuid)
+			.orElseThrow(() -> new EntityNotFoundException("Restaurant", restaurantUuid.toString()))
+			.getId();
 
-		final var menuItem = menuItemGateway.findById(id)
-			.orElseThrow(() -> new EntityNotFoundException("MenuItem", id.toString()));
+		final var menuItem = menuItemGateway.findByUuid(menuItemUuid)
+			.orElseThrow(() -> new EntityNotFoundException("MenuItem", menuItemUuid.toString()));
 
 		if (!restaurantId.equals(menuItem.getRestaurantId())) {
-			throw new EntityNotFoundException("MenuItem", id.toString());
+			throw new EntityNotFoundException("MenuItem", menuItemUuid.toString());
 		}
 
-		menuItemGateway.deleteById(id);
+		menuItemGateway.deleteByUuid(menuItemUuid);
 	}
 }

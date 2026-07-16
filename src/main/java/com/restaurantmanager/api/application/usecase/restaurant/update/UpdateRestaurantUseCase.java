@@ -5,6 +5,7 @@ import com.restaurantmanager.api.domain.exception.EntityNotFoundException;
 import com.restaurantmanager.api.domain.model.Restaurant;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class UpdateRestaurantUseCase {
 
@@ -14,23 +15,24 @@ public class UpdateRestaurantUseCase {
 		this.restaurantGateway = Objects.requireNonNull(restaurantGateway);
 	}
 
-	public Restaurant execute(final Long id, final Restaurant restaurant) {
-		Objects.requireNonNull(id);
+	public Restaurant execute(final UUID uuid, final Restaurant restaurant) {
+		Objects.requireNonNull(uuid);
 		Objects.requireNonNull(restaurant);
 
-		restaurantGateway.findById(id)
-			.orElseThrow(() -> new EntityNotFoundException("Restaurant", id.toString()));
+		final Restaurant existing = restaurantGateway.findByUuid(uuid)
+			.orElseThrow(() -> new EntityNotFoundException("Restaurant", uuid.toString()));
 
 		restaurant.validate();
 
 		final Restaurant updated = new Restaurant(
-			id,
+			existing.getId(),
 			restaurant.getName(),
 			restaurant.getAddress(),
 			restaurant.getCuisineType(),
 			restaurant.getOpeningHours(),
 			restaurant.getOwnerUserId()
 		);
+
 
 		return restaurantGateway.save(updated);
 	}

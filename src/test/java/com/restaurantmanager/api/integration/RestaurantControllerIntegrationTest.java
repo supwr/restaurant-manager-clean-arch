@@ -1,7 +1,9 @@
 package com.restaurantmanager.api.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.restaurantmanager.api.model.CreateUserRequest;
 import com.restaurantmanager.api.model.RestaurantRequest;
+import com.restaurantmanager.api.model.UserType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +13,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,16 +34,22 @@ class RestaurantControllerIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     private RestaurantRequest validRequest;
 
     @BeforeEach
     void setUp() {
+        seedDefaultUserTypes();
+
+        final String suffix = UUID.randomUUID().toString().substring(0, 8);
         validRequest = new RestaurantRequest();
-        validRequest.setName("Test Restaurant");
+        validRequest.setName("Test Restaurant " + suffix);
         validRequest.setAddress("123 Main St");
         validRequest.setCuisineType("Italian");
         validRequest.setOpeningHours("9AM-10PM");
-        validRequest.setOwnerUserId(1L);
+        validRequest.setOwnerUserUuid(createOwnerUserUuid());
     }
 
     @Test
@@ -48,11 +58,13 @@ class RestaurantControllerIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(validRequest)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name", equalTo("Test Restaurant")))
+                .andExpect(jsonPath("$.name", equalTo(validRequest.getName())))
                 .andExpect(jsonPath("$.address", equalTo("123 Main St")))
                 .andExpect(jsonPath("$.cuisineType", equalTo("Italian")))
                 .andExpect(jsonPath("$.uuid").exists())
-                .andExpect(jsonPath("$.id").exists());
+                .andExpect(jsonPath("$.ownerUser.id").exists())
+                .andExpect(jsonPath("$.ownerUser.name").exists())
+                .andExpect(jsonPath("$.id").doesNotExist());
     }
 
     @Test
@@ -72,7 +84,8 @@ class RestaurantControllerIntegrationTest {
                 .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(1))))
                 .andExpect(jsonPath("$[0].name").exists())
                 .andExpect(jsonPath("$[0].uuid").exists())
-                .andExpect(jsonPath("$[0].id").exists());
+                .andExpect(jsonPath("$[0].ownerUser.id").exists())
+                .andExpect(jsonPath("$[0].id").doesNotExist());
     }
 
     @Test
@@ -90,9 +103,11 @@ class RestaurantControllerIntegrationTest {
         // Get restaurant by uuid
         mockMvc.perform(get("/api/v1/restaurants/{uuid}", uuid))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", equalTo("Test Restaurant")))
+                .andExpect(jsonPath("$.name", equalTo(validRequest.getName())))
                 .andExpect(jsonPath("$.uuid", equalTo(uuid)))
-                .andExpect(jsonPath("$.address", equalTo("123 Main St")));
+                .andExpect(jsonPath("$.address", equalTo("123 Main St")))
+                .andExpect(jsonPath("$.ownerUser.id").exists())
+                .andExpect(jsonPath("$.ownerUser.name").exists());
     }
 
     @Test
@@ -113,7 +128,7 @@ class RestaurantControllerIntegrationTest {
         updateRequest.setAddress("456 Oak Ave");
         updateRequest.setCuisineType("French");
         updateRequest.setOpeningHours("10AM-11PM");
-        updateRequest.setOwnerUserId(2L);
+        updateRequest.setOwnerUserUuid(validRequest.getOwnerUserUuid());
 
         mockMvc.perform(put("/api/v1/restaurants/{uuid}", uuid)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -121,7 +136,8 @@ class RestaurantControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", equalTo("Updated Restaurant")))
                 .andExpect(jsonPath("$.address", equalTo("456 Oak Ave")))
-                .andExpect(jsonPath("$.cuisineType", equalTo("French")));
+                .andExpect(jsonPath("$.cuisineType", equalTo("French")))
+                .andExpect(jsonPath("$.ownerUser.id").exists());
     }
 
     @Test
@@ -149,6 +165,10 @@ class RestaurantControllerIntegrationTest {
     void testCreateRestaurant_InvalidData() throws Exception {
         RestaurantRequest invalidRequest = new RestaurantRequest();
         invalidRequest.setName(""); // Invalid: empty name
+        invalidRequest.setAddress("123 Main St");
+        invalidRequest.setCuisineType("Italian");
+        invalidRequest.setOpeningHours("9AM-10PM");
+        invalidRequest.setOwnerUserUuid(validRequest.getOwnerUserUuid());
 
         mockMvc.perform(post("/api/v1/restaurants")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -171,6 +191,39 @@ class RestaurantControllerIntegrationTest {
             return matcher.group(1);
         }
         return null;
+    }
+
+    private UUID createOwnerUserUuid() {
+        try {
+            final String suffix = UUID.randomUUID().toString().substring(0, 8);
+            final CreateUserRequest createUserRequest = new CreateUserRequest();
+            createUserRequest.setName("Owner " + suffix);
+            createUserRequest.setEmail("owner-" + suffix + "@example.com");
+            createUserRequest.setLogin("owner-" + suffix);
+            final UserType userType = new UserType();
+            userType.setName("OWNER");
+            createUserRequest.setType(userType);
+
+            final MvcResult result = mockMvc.perform(post("/api/v1/users")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(createUserRequest)))
+                    .andExpect(status().isCreated())
+                    .andReturn();
+
+            final String createdUuid = extractUuidFromJson(result.getResponse().getContentAsString());
+            if (createdUuid == null) {
+                throw new IllegalStateException("Owner user creation did not return a UUID");
+            }
+            return UUID.fromString(createdUuid);
+        } catch (Exception ex) {
+            throw new IllegalStateException("Failed to create owner user for integration test", ex);
+        }
+    }
+
+    private void seedDefaultUserTypes() {
+        jdbcTemplate.update("merge into user_types (id, uuid, name, created_at, updated_at) key(id) values (?, random_uuid(), ?, current_timestamp, current_timestamp)", 1L, "OWNER");
+        jdbcTemplate.update("merge into user_types (id, uuid, name, created_at, updated_at) key(id) values (?, random_uuid(), ?, current_timestamp, current_timestamp)", 2L, "CUSTOMER");
+        jdbcTemplate.execute("alter table user_types alter column id restart with 3");
     }
 }
 

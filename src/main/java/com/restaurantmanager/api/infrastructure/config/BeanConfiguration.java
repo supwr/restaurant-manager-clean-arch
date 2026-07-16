@@ -16,12 +16,9 @@ import com.restaurantmanager.api.application.usecase.restaurant.list.ListRestaur
 import com.restaurantmanager.api.application.usecase.restaurant.update.UpdateRestaurantUseCase;
 import com.restaurantmanager.api.application.usecase.user.create.CreateUserUseCase;
 import com.restaurantmanager.api.application.usecase.user.delete.DeleteUserUseCase;
-import com.restaurantmanager.api.application.usecase.user.delete.DeleteUserByUuidUseCase;
 import com.restaurantmanager.api.application.usecase.user.get.GetUserUseCase;
-import com.restaurantmanager.api.application.usecase.user.get.GetUserByUuidUseCase;
 import com.restaurantmanager.api.application.usecase.user.list.ListUserCase;
 import com.restaurantmanager.api.application.usecase.user.update.UpdateUserUseCase;
-import com.restaurantmanager.api.application.usecase.user.update.UpdateUserByUuidUseCase;
 import com.restaurantmanager.api.application.usecase.usertype.create.CreateUserTypeUseCase;
 import com.restaurantmanager.api.application.usecase.usertype.delete.DeleteUserTypeUseCase;
 import com.restaurantmanager.api.application.usecase.usertype.get.GetUserTypeUseCase;
@@ -60,18 +57,18 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public GetUserByUuidUseCase getUserByUuidUseCase(final UserGateway userGateway) {
-        return new GetUserByUuidUseCase(userGateway);
+    public GetUserUseCase getUserByUuidUseCase(final UserGateway userGateway) {
+        return new GetUserUseCase(userGateway);
     }
 
     @Bean
-    public DeleteUserByUuidUseCase deleteUserByUuidUseCase(final UserGateway userGateway) {
-        return new DeleteUserByUuidUseCase(userGateway);
+    public DeleteUserUseCase deleteUserByUuidUseCase(final UserGateway userGateway) {
+        return new DeleteUserUseCase(userGateway);
     }
 
     @Bean
-    public UpdateUserByUuidUseCase updateUserByUuidUseCase(final UserGateway userGateway) {
-        return new UpdateUserByUuidUseCase(userGateway);
+    public UpdateUserUseCase updateUserByUuidUseCase(final UserGateway userGateway) {
+        return new UpdateUserUseCase(userGateway);
     }
 
     @Bean

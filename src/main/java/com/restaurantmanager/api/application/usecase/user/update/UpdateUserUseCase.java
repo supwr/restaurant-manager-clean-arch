@@ -6,6 +6,7 @@ import com.restaurantmanager.api.domain.exception.ValidationException;
 import com.restaurantmanager.api.domain.model.User;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class UpdateUserUseCase {
 
@@ -15,12 +16,12 @@ public class UpdateUserUseCase {
 		this.userGateway = Objects.requireNonNull(userGateway, "userGateway must not be null");
 	}
 
-	public User execute(final Long id, final User user) {
-		Objects.requireNonNull(id, "id must not be null");
+	public User execute(final UUID uuid, final User user) {
+		Objects.requireNonNull(uuid, "uuid must not be null");
 		Objects.requireNonNull(user, "user must not be null");
 
-		final User existing = userGateway.findById(id)
-			.orElseThrow(() -> new EntityNotFoundException("User", id.toString()));
+		final User existing = userGateway.findByUuid(uuid)
+			.orElseThrow(() -> new EntityNotFoundException("User", uuid.toString()));
 
 		validateUpdatableFields(user);
 
@@ -35,7 +36,7 @@ public class UpdateUserUseCase {
 		}
 
 		final User updated = new MutableUser(
-			id,
+			existing.getId(),
 			existing.getUuid(),
 			user.getName() != null ? user.getName() : existing.getName(),
 			user.getEmail() != null ? user.getEmail() : existing.getEmail(),
@@ -79,3 +80,4 @@ public class UpdateUserUseCase {
 		}
 	}
 }
+

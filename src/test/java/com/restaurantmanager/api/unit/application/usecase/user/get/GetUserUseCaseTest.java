@@ -1,7 +1,7 @@
 package com.restaurantmanager.api.unit.application.usecase.user.get;
 
 import com.restaurantmanager.api.application.gateway.UserGateway;
-import com.restaurantmanager.api.application.usecase.user.get.GetUserByUuidUseCase;
+import com.restaurantmanager.api.application.usecase.user.get.GetUserUseCase;
 import com.restaurantmanager.api.domain.exception.EntityNotFoundException;
 import com.restaurantmanager.api.domain.model.Owner;
 import com.restaurantmanager.api.domain.model.User;
@@ -20,16 +20,16 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class GetUserByUuidUseCaseTest {
+class GetUserUseCaseTest {
 
     @Mock
     private UserGateway userGateway;
 
-    private GetUserByUuidUseCase useCase;
+    private GetUserUseCase useCase;
 
     @BeforeEach
     void setUp() {
-        useCase = new GetUserByUuidUseCase(userGateway);
+        useCase = new GetUserUseCase(userGateway);
     }
 
     @Test

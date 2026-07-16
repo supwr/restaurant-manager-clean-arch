@@ -4,6 +4,7 @@ import com.restaurantmanager.api.application.gateway.UserGateway;
 import com.restaurantmanager.api.domain.exception.EntityNotFoundException;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class DeleteUserUseCase {
 
@@ -13,13 +14,12 @@ public class DeleteUserUseCase {
 		this.userGateway = Objects.requireNonNull(userGateway, "userGateway must not be null");
 	}
 
-	public void execute(final Long id) {
-		Objects.requireNonNull(id, "id must not be null");
-
-		if (!userGateway.existsById(id)) {
-			throw new EntityNotFoundException("User", id.toString());
-		}
-
+	public void execute(final UUID uuid) {
+		Objects.requireNonNull(uuid, "uuid must not be null");
+		final Long id = userGateway.findByUuid(uuid)
+			.map(user -> user.getId())
+			.orElseThrow(() -> new EntityNotFoundException("User", uuid.toString()));
 		userGateway.deleteById(id);
 	}
 }
+

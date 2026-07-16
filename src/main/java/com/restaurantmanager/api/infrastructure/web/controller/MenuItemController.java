@@ -14,6 +14,7 @@ import com.restaurantmanager.api.application.gateway.MenuItemGateway;
 import com.restaurantmanager.api.application.gateway.RestaurantGateway;
 import com.restaurantmanager.api.model.MenuItemRequest;
 import com.restaurantmanager.api.model.MenuItemResponse;
+import com.restaurantmanager.api.model.RelatedRestaurant;
 import com.restaurantmanager.api.infrastructure.web.mapper.MenuItemMapper;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -58,53 +59,39 @@ public class MenuItemController implements MenuItemsApi {
 
     @Override
     public ResponseEntity<MenuItemResponse> createMenuItem(final UUID restaurantUuid, @Valid final MenuItemRequest menuItemRequest) {
-        final Long restaurantId = restaurantGateway.findByUuid(restaurantUuid)
-            .orElseThrow(() -> new EntityNotFoundException("Restaurant", restaurantUuid.toString()))
-            .getId();
-        final MenuItem created = createMenuItemUseCase.execute(menuItemMapper.map(restaurantId, menuItemRequest));
-        return ResponseEntity.status(HttpStatus.CREATED).body(menuItemMapper.map(created));
+        final MenuItem created = createMenuItemUseCase.execute(restaurantUuid, menuItemMapper.map(menuItemRequest));
+        return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(created, restaurantUuid));
     }
 
     @Override
     public ResponseEntity<Void> deleteMenuItem(final UUID restaurantUuid, final UUID menuItemUuid) {
-        final Long restaurantId = restaurantGateway.findByUuid(restaurantUuid)
-            .orElseThrow(() -> new EntityNotFoundException("Restaurant", restaurantUuid.toString()))
-            .getId();
-        final Long menuItemId = menuItemGateway.findByUuid(menuItemUuid)
-            .orElseThrow(() -> new EntityNotFoundException("MenuItem", menuItemUuid.toString()))
-            .getId();
-        deleteMenuItemUseCase.execute(restaurantId, menuItemId);
+        deleteMenuItemUseCase.execute(restaurantUuid, menuItemUuid);
         return ResponseEntity.noContent().build();
     }
 
     @Override
     public ResponseEntity<MenuItemResponse> getMenuItemById(final UUID restaurantUuid, final UUID menuItemUuid) {
-        final Long restaurantId = restaurantGateway.findByUuid(restaurantUuid)
-            .orElseThrow(() -> new EntityNotFoundException("Restaurant", restaurantUuid.toString()))
-            .getId();
-        final Long menuItemId = menuItemGateway.findByUuid(menuItemUuid)
-            .orElseThrow(() -> new EntityNotFoundException("MenuItem", menuItemUuid.toString()))
-            .getId();
-        return ResponseEntity.ok(menuItemMapper.map(getMenuItemUseCase.execute(restaurantId, menuItemId)));
+        return ResponseEntity.ok(toResponse(getMenuItemUseCase.execute(restaurantUuid, menuItemUuid), restaurantUuid));
     }
 
     @Override
     public ResponseEntity<List<MenuItemResponse>> listMenuItems(final UUID restaurantUuid, final Integer page, final Integer size) {
-        final Long restaurantId = restaurantGateway.findByUuid(restaurantUuid)
-            .orElseThrow(() -> new EntityNotFoundException("Restaurant", restaurantUuid.toString()))
-            .getId();
-        final PageResult<MenuItem> result = listMenuItemsUseCase.execute(restaurantId, new Pagination(page == null ? 0 : page, size == null ? 20 : size, "id"));
-        return ResponseEntity.ok(result.getContent().stream().map(menuItemMapper::map).toList());
+        final PageResult<MenuItem> result = listMenuItemsUseCase.execute(restaurantUuid, new Pagination(page == null ? 0 : page, size == null ? 20 : size, "id"));
+        return ResponseEntity.ok(result.getContent().stream().map(menuItem -> toResponse(menuItem, restaurantUuid)).toList());
     }
 
     @Override
     public ResponseEntity<MenuItemResponse> updateMenuItem(final UUID restaurantUuid, final UUID menuItemUuid, @Valid final MenuItemRequest menuItemRequest) {
-        final Long restaurantId = restaurantGateway.findByUuid(restaurantUuid)
-            .orElseThrow(() -> new EntityNotFoundException("Restaurant", restaurantUuid.toString()))
-            .getId();
-        final Long menuItemId = menuItemGateway.findByUuid(menuItemUuid)
-            .orElseThrow(() -> new EntityNotFoundException("MenuItem", menuItemUuid.toString()))
-            .getId();
-        return ResponseEntity.ok(menuItemMapper.map(updateMenuItemUseCase.execute(restaurantId, menuItemId, menuItemMapper.map(restaurantId, menuItemId, menuItemRequest))));
+        return ResponseEntity.ok(toResponse(updateMenuItemUseCase.execute(restaurantUuid, menuItemUuid, menuItemMapper.map(menuItemRequest)), restaurantUuid));
+    }
+
+    private MenuItemResponse toResponse(final MenuItem menuItem, final UUID restaurantUuid) {
+        final var restaurant = restaurantGateway.findByUuid(restaurantUuid)
+            .orElseThrow(() -> new EntityNotFoundException("Restaurant", restaurantUuid.toString()));
+
+        final RelatedRestaurant relatedRestaurant = new RelatedRestaurant();
+        relatedRestaurant.setId(restaurant.getUuid());
+        relatedRestaurant.setName(restaurant.getName());
+        return menuItemMapper.map(menuItem, relatedRestaurant);
     }
 }

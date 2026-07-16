@@ -6,6 +6,7 @@ import com.restaurantmanager.api.domain.exception.EntityNotFoundException;
 import com.restaurantmanager.api.domain.model.MenuItem;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class UpdateMenuItemUseCase {
 
@@ -20,26 +21,26 @@ public class UpdateMenuItemUseCase {
 		this.restaurantGateway = Objects.requireNonNull(restaurantGateway);
 	}
 
-	public MenuItem execute(final Long restaurantId, final Long id, final MenuItem menuItem) {
-		Objects.requireNonNull(restaurantId);
-		Objects.requireNonNull(id);
+	public MenuItem execute(final UUID restaurantUuid, final UUID menuItemUuid, final MenuItem menuItem) {
+		Objects.requireNonNull(restaurantUuid);
+		Objects.requireNonNull(menuItemUuid);
 		Objects.requireNonNull(menuItem);
 
-		if (!restaurantGateway.existsById(restaurantId)) {
-			throw new EntityNotFoundException("Restaurant", restaurantId.toString());
-		}
+		final Long restaurantId = restaurantGateway.findByUuid(restaurantUuid)
+			.orElseThrow(() -> new EntityNotFoundException("Restaurant", restaurantUuid.toString()))
+			.getId();
 
-		final MenuItem existing = menuItemGateway.findById(id)
-			.orElseThrow(() -> new EntityNotFoundException("MenuItem", id.toString()));
+		final MenuItem existing = menuItemGateway.findByUuid(menuItemUuid)
+			.orElseThrow(() -> new EntityNotFoundException("MenuItem", menuItemUuid.toString()));
 
 		if (!restaurantId.equals(existing.getRestaurantId())) {
-			throw new EntityNotFoundException("MenuItem", id.toString());
+			throw new EntityNotFoundException("MenuItem", menuItemUuid.toString());
 		}
 
 		menuItem.validate();
 
 		final MenuItem updated = new MenuItem(
-			id,
+			existing.getId(),
 			restaurantId,
 			menuItem.getName(),
 			menuItem.getDescription(),
@@ -47,6 +48,7 @@ public class UpdateMenuItemUseCase {
 			menuItem.getLocalOnly(),
 			menuItem.getPhotoPath()
 		);
+
 
 		return menuItemGateway.save(updated);
 	}

@@ -12,10 +12,22 @@ import org.mapstruct.Mapping;
 public interface UserMapper {
 
     @Mapping(target = "uuid", source = "uuid")
+    @Mapping(target = "name", source = "name")
+    @Mapping(target = "email", source = "email")
+    @Mapping(target = "login", source = "login")
     @Mapping(target = "createdAt", expression = "java(user.getCreatedAt() == null ? null : java.time.OffsetDateTime.ofInstant(user.getCreatedAt(), java.time.ZoneOffset.UTC))")
     @Mapping(target = "lastModifiedAt", expression = "java(user.getUpdatedAt() == null ? null : java.time.OffsetDateTime.ofInstant(user.getUpdatedAt(), java.time.ZoneOffset.UTC))")
     @Mapping(target = "type", expression = "java(resolveType(user))")
     UserResponse map(User user);
+
+    @Mapping(target = "uuid", source = "user.uuid")
+    @Mapping(target = "name", source = "user.name")
+    @Mapping(target = "email", source = "user.email")
+    @Mapping(target = "login", source = "user.login")
+    @Mapping(target = "createdAt", expression = "java(user.getCreatedAt() == null ? null : java.time.OffsetDateTime.ofInstant(user.getCreatedAt(), java.time.ZoneOffset.UTC))")
+    @Mapping(target = "lastModifiedAt", expression = "java(user.getUpdatedAt() == null ? null : java.time.OffsetDateTime.ofInstant(user.getUpdatedAt(), java.time.ZoneOffset.UTC))")
+    @Mapping(target = "type", source = "type")
+    UserResponse map(User user, UserType type);
 
     default UserType resolveType(final User user) {
         if (user == null) {

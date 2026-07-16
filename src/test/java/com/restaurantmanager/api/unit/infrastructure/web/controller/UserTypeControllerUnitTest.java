@@ -1,6 +1,5 @@
 package com.restaurantmanager.api.unit.infrastructure.web.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.restaurantmanager.api.application.gateway.UserTypeGateway;
 import com.restaurantmanager.api.application.usecase.usertype.create.CreateUserTypeUseCase;
 import com.restaurantmanager.api.application.usecase.usertype.delete.DeleteUserTypeUseCase;
@@ -44,26 +43,25 @@ class UserTypeControllerUnitTest {
     @Mock private UserTypeGateway userTypeGateway;
 
     private MockMvc mockMvc;
-    private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(new UserTypeController(
             createUserTypeUseCase, getUserTypeUseCase, listUserTypesUseCase, updateUserTypeUseCase, deleteUserTypeUseCase, userTypeMapper, userTypeGateway
         )).setControllerAdvice(new GlobalExceptionHandler()).build();
-        objectMapper = new ObjectMapper();
     }
 
     @Test
     void testCreateUserType_Success() throws Exception {
         UserType domain = new UserType(1L, UUID.randomUUID(), "ADMIN", "Admin");
-        UserTypeResponse response = new UserTypeResponse(); response.setId(1L); response.setName("ADMIN");
+        UserTypeResponse response = new UserTypeResponse(); response.setUuid(domain.getUuid()); response.setName("ADMIN");
         when(userTypeMapper.map(any(UserTypeRequest.class))).thenReturn(new UserType(null, "ADMIN", "Admin"));
         when(createUserTypeUseCase.execute(any(UserType.class))).thenReturn(domain);
         when(userTypeMapper.map(domain)).thenReturn(response);
 
-        UserTypeRequest request = new UserTypeRequest(); request.setName("ADMIN"); request.setObservation("Admin");
-        mockMvc.perform(post("/api/v1/user-types").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request)))
+        mockMvc.perform(post("/api/v1/user-types")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"ADMIN\"}"))
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.name").value("ADMIN"));
     }
@@ -71,7 +69,7 @@ class UserTypeControllerUnitTest {
     @Test
     void testListUserTypes_Success() throws Exception {
         UserType domain = new UserType(1L, UUID.randomUUID(), "ADMIN", "Admin");
-        UserTypeResponse response = new UserTypeResponse(); response.setId(1L); response.setName("ADMIN");
+        UserTypeResponse response = new UserTypeResponse(); response.setUuid(domain.getUuid()); response.setName("ADMIN");
         when(listUserTypesUseCase.execute()).thenReturn(List.of(domain));
         when(userTypeMapper.map(domain)).thenReturn(response);
 
@@ -84,7 +82,7 @@ class UserTypeControllerUnitTest {
     void testGetUserTypeByUuid_Success() throws Exception {
         UUID uuid = UUID.randomUUID();
         UserType domain = new UserType(1L, uuid, "ADMIN", "Admin");
-        UserTypeResponse response = new UserTypeResponse(); response.setId(1L); response.setName("ADMIN");
+        UserTypeResponse response = new UserTypeResponse(); response.setUuid(uuid); response.setName("ADMIN");
         when(userTypeGateway.findByUuid(uuid)).thenReturn(Optional.of(domain));
         when(getUserTypeUseCase.execute(1L)).thenReturn(domain);
         when(userTypeMapper.map(domain)).thenReturn(response);

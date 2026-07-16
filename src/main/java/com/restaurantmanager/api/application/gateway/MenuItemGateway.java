@@ -18,6 +18,8 @@ public interface MenuItemGateway {
 
     void deleteById(Long id);
 
+    void deleteByUuid(UUID uuid);
+
     boolean existsById(Long id);
 
     boolean existsByUuid(UUID uuid);

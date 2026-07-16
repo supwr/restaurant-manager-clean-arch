@@ -34,7 +34,6 @@ class UserTypePersistenceMapperTest {
         entity.setId(1L);
         entity.setUuid(uuid);
         entity.setName("ADMIN");
-        entity.setObservation("Administrator");
 
         UserType domain = mapper.toDomain(entity);
 

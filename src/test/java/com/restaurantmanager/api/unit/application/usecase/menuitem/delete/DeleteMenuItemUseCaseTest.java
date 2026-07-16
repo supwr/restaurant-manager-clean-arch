@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
+import com.restaurantmanager.api.domain.model.Restaurant;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -37,88 +38,88 @@ class DeleteMenuItemUseCaseTest {
 
     @Test
     void testDeleteMenuItem_Success() {
-        long restaurantId = 1L;
-        long menuItemId = 1L;
-        UUID uuid = UUID.randomUUID();
+        final UUID restaurantUuid = UUID.randomUUID();
+        final UUID menuItemUuid = UUID.randomUUID();
 
-        MenuItem menuItem = new MenuItem(menuItemId, uuid, restaurantId, "Pizza", "Delicious pizza", new BigDecimal("10.50"), false, "/path");
+        MenuItem menuItem = new MenuItem(1L, menuItemUuid, 1L, "Pizza", "Delicious pizza", new BigDecimal("10.50"), false, "/path");
+        final Restaurant restaurant = new Restaurant(1L, restaurantUuid, "R", "A", "C", "9AM", 1L);
 
-        when(restaurantGateway.existsById(restaurantId)).thenReturn(true);
-        when(menuItemGateway.findById(menuItemId)).thenReturn(Optional.of(menuItem));
+        when(restaurantGateway.findByUuid(restaurantUuid)).thenReturn(Optional.of(restaurant));
+        when(menuItemGateway.findByUuid(menuItemUuid)).thenReturn(Optional.of(menuItem));
 
-        assertDoesNotThrow(() -> useCase.execute(restaurantId, menuItemId));
+        assertDoesNotThrow(() -> useCase.execute(restaurantUuid, menuItemUuid));
 
-        verify(restaurantGateway, times(1)).existsById(restaurantId);
-        verify(menuItemGateway, times(1)).findById(menuItemId);
-        verify(menuItemGateway, times(1)).deleteById(menuItemId);
+        verify(restaurantGateway, times(1)).findByUuid(restaurantUuid);
+        verify(menuItemGateway, times(1)).findByUuid(menuItemUuid);
+        verify(menuItemGateway, times(1)).deleteByUuid(menuItemUuid);
     }
 
     @Test
     void testDeleteMenuItem_RestaurantNotFound() {
-        long restaurantId = 999L;
-        long menuItemId = 1L;
+        final UUID restaurantUuid = UUID.randomUUID();
+        final UUID menuItemUuid = UUID.randomUUID();
 
-        when(restaurantGateway.existsById(restaurantId)).thenReturn(false);
+        when(restaurantGateway.findByUuid(restaurantUuid)).thenReturn(Optional.empty());
 
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> useCase.execute(restaurantId, menuItemId));
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> useCase.execute(restaurantUuid, menuItemUuid));
 
         assertTrue(exception.getMessage().contains("Restaurant"));
 
-        verify(restaurantGateway, times(1)).existsById(restaurantId);
-        verify(menuItemGateway, never()).findById(any());
-        verify(menuItemGateway, never()).deleteById(any());
+        verify(restaurantGateway, times(1)).findByUuid(restaurantUuid);
+        verify(menuItemGateway, never()).findByUuid(any());
+        verify(menuItemGateway, never()).deleteByUuid(any());
     }
 
     @Test
     void testDeleteMenuItem_MenuItemNotFound() {
-        long restaurantId = 1L;
-        long menuItemId = 999L;
+        final UUID restaurantUuid = UUID.randomUUID();
+        final UUID menuItemUuid = UUID.randomUUID();
+        final Restaurant restaurant = new Restaurant(1L, restaurantUuid, "R", "A", "C", "9AM", 1L);
 
-        when(restaurantGateway.existsById(restaurantId)).thenReturn(true);
-        when(menuItemGateway.findById(menuItemId)).thenReturn(Optional.empty());
+        when(restaurantGateway.findByUuid(restaurantUuid)).thenReturn(Optional.of(restaurant));
+        when(menuItemGateway.findByUuid(menuItemUuid)).thenReturn(Optional.empty());
 
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> useCase.execute(restaurantId, menuItemId));
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> useCase.execute(restaurantUuid, menuItemUuid));
 
         assertTrue(exception.getMessage().contains("MenuItem"));
 
-        verify(restaurantGateway, times(1)).existsById(restaurantId);
-        verify(menuItemGateway, times(1)).findById(menuItemId);
-        verify(menuItemGateway, never()).deleteById(any());
+        verify(restaurantGateway, times(1)).findByUuid(restaurantUuid);
+        verify(menuItemGateway, times(1)).findByUuid(menuItemUuid);
+        verify(menuItemGateway, never()).deleteByUuid(any());
     }
 
     @Test
     void testDeleteMenuItem_MenuItemBelongsToOtherRestaurant() {
-        long restaurantId = 1L;
-        long otherRestaurantId = 2L;
-        long menuItemId = 1L;
-        UUID uuid = UUID.randomUUID();
+        final UUID restaurantUuid = UUID.randomUUID();
+        final UUID menuItemUuid = UUID.randomUUID();
+        final Restaurant restaurant = new Restaurant(1L, restaurantUuid, "R", "A", "C", "9AM", 1L);
 
-        MenuItem menuItem = new MenuItem(menuItemId, uuid, otherRestaurantId, "Pizza", "Delicious pizza", new BigDecimal("10.50"), false, "/path");
+        MenuItem menuItem = new MenuItem(1L, menuItemUuid, 2L, "Pizza", "Delicious pizza", new BigDecimal("10.50"), false, "/path");
 
-        when(restaurantGateway.existsById(restaurantId)).thenReturn(true);
-        when(menuItemGateway.findById(menuItemId)).thenReturn(Optional.of(menuItem));
+        when(restaurantGateway.findByUuid(restaurantUuid)).thenReturn(Optional.of(restaurant));
+        when(menuItemGateway.findByUuid(menuItemUuid)).thenReturn(Optional.of(menuItem));
 
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> useCase.execute(restaurantId, menuItemId));
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> useCase.execute(restaurantUuid, menuItemUuid));
 
         assertTrue(exception.getMessage().contains("MenuItem"));
 
-        verify(menuItemGateway, never()).deleteById(any());
+        verify(menuItemGateway, never()).deleteByUuid(any());
     }
 
     @Test
     void testDeleteMenuItem_NullRestaurantId() {
-        assertThrows(NullPointerException.class, () -> useCase.execute(null, 1L));
+        assertThrows(NullPointerException.class, () -> useCase.execute(null, UUID.randomUUID()));
 
-        verify(restaurantGateway, never()).existsById(any());
-        verify(menuItemGateway, never()).deleteById(any());
+        verify(restaurantGateway, never()).findByUuid(any());
+        verify(menuItemGateway, never()).deleteByUuid(any());
     }
 
     @Test
     void testDeleteMenuItem_NullMenuItemId() {
-        assertThrows(NullPointerException.class, () -> useCase.execute(1L, null));
+        assertThrows(NullPointerException.class, () -> useCase.execute(UUID.randomUUID(), null));
 
-        verify(restaurantGateway, never()).existsById(any());
-        verify(menuItemGateway, never()).deleteById(any());
+        verify(restaurantGateway, never()).findByUuid(any());
+        verify(menuItemGateway, never()).deleteByUuid(any());
     }
 }
 

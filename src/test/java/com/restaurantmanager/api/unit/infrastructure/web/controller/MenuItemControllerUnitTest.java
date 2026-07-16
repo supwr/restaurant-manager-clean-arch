@@ -16,6 +16,7 @@ import com.restaurantmanager.api.infrastructure.web.exception.GlobalExceptionHan
 import com.restaurantmanager.api.infrastructure.web.mapper.MenuItemMapper;
 import com.restaurantmanager.api.model.MenuItemRequest;
 import com.restaurantmanager.api.model.MenuItemResponse;
+import com.restaurantmanager.api.model.RelatedRestaurant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,6 +33,7 @@ import java.util.UUID;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -62,13 +64,17 @@ class MenuItemControllerUnitTest {
     @Test
     void testCreateMenuItem_Success() throws Exception {
         UUID restaurantUuid = UUID.randomUUID();
-        Restaurant restaurant = new Restaurant(10L, restaurantUuid, "Resto", "Street", "Italian", "9AM", 1L);
         MenuItem domain = new MenuItem(1L, UUID.randomUUID(), 10L, "Pizza", "Tasty", new BigDecimal("10.50"), true, "/pizza");
-        MenuItemResponse response = new MenuItemResponse(); response.setId(1L); response.setName("Pizza");
+        Restaurant restaurant = new Restaurant(10L, restaurantUuid, "Resto", "Street", "Italian", "9AM", 1L);
+        MenuItemResponse response = new MenuItemResponse(); response.setUuid(UUID.randomUUID());
+        RelatedRestaurant relatedRestaurant = new RelatedRestaurant();
+        relatedRestaurant.setId(restaurantUuid);
+        relatedRestaurant.setName("Resto");
+        response.setRestaurant(relatedRestaurant); response.setName("Pizza");
         when(restaurantGateway.findByUuid(restaurantUuid)).thenReturn(Optional.of(restaurant));
-        when(menuItemMapper.map(10L, any(MenuItemRequest.class))).thenReturn(new MenuItem(null, 10L, "Pizza", "Tasty", new BigDecimal("10.50"), true, "/pizza"));
-        when(createMenuItemUseCase.execute(any(MenuItem.class))).thenReturn(domain);
-        when(menuItemMapper.map(domain)).thenReturn(response);
+        when(menuItemMapper.map(any(MenuItemRequest.class))).thenReturn(new MenuItem(null, null, "Pizza", "Tasty", new BigDecimal("10.50"), true, "/pizza"));
+        when(createMenuItemUseCase.execute(eq(restaurantUuid), any(MenuItem.class))).thenReturn(domain);
+        when(menuItemMapper.map(eq(domain), any(RelatedRestaurant.class))).thenReturn(response);
 
         MenuItemRequest request = new MenuItemRequest(); request.setName("Pizza"); request.setDescription("Tasty"); request.setPrice(new BigDecimal("10.50")); request.setLocalOnly(true); request.setPhotoPath("/pizza");
         mockMvc.perform(post("/api/v1/restaurants/{restaurantUuid}/menu-items", restaurantUuid).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request)))
@@ -79,12 +85,16 @@ class MenuItemControllerUnitTest {
     @Test
     void testListMenuItems_Success() throws Exception {
         UUID restaurantUuid = UUID.randomUUID();
-        Restaurant restaurant = new Restaurant(10L, restaurantUuid, "Resto", "Street", "Italian", "9AM", 1L);
         MenuItem domain = new MenuItem(1L, UUID.randomUUID(), 10L, "Pizza", "Tasty", new BigDecimal("10.50"), true, "/pizza");
-        MenuItemResponse response = new MenuItemResponse(); response.setId(1L); response.setName("Pizza");
+        Restaurant restaurant = new Restaurant(10L, restaurantUuid, "Resto", "Street", "Italian", "9AM", 1L);
+        MenuItemResponse response = new MenuItemResponse(); response.setUuid(UUID.randomUUID());
+        RelatedRestaurant relatedRestaurant = new RelatedRestaurant();
+        relatedRestaurant.setId(restaurantUuid);
+        relatedRestaurant.setName("Resto");
+        response.setRestaurant(relatedRestaurant); response.setName("Pizza");
         when(restaurantGateway.findByUuid(restaurantUuid)).thenReturn(Optional.of(restaurant));
-        when(listMenuItemsUseCase.execute(eq(10L), any())).thenReturn(new PageResult<>(List.of(domain), 0, 20, 1L, 1));
-        when(menuItemMapper.map(domain)).thenReturn(response);
+        when(listMenuItemsUseCase.execute(eq(restaurantUuid), any())).thenReturn(new PageResult<>(List.of(domain), 0, 20, 1L, 1));
+        when(menuItemMapper.map(eq(domain), any(RelatedRestaurant.class))).thenReturn(response);
 
         mockMvc.perform(get("/api/v1/restaurants/{restaurantUuid}/menu-items", restaurantUuid))
             .andExpect(status().isOk())
@@ -95,10 +105,8 @@ class MenuItemControllerUnitTest {
     void testDeleteMenuItem_Success() throws Exception {
         UUID restaurantUuid = UUID.randomUUID();
         UUID menuItemUuid = UUID.randomUUID();
-        Restaurant restaurant = new Restaurant(10L, restaurantUuid, "Resto", "Street", "Italian", "9AM", 1L);
         MenuItem domain = new MenuItem(1L, menuItemUuid, 10L, "Pizza", "Tasty", new BigDecimal("10.50"), true, "/pizza");
-        when(restaurantGateway.findByUuid(restaurantUuid)).thenReturn(Optional.of(restaurant));
-        when(menuItemGateway.findByUuid(menuItemUuid)).thenReturn(Optional.of(domain));
+        doNothing().when(deleteMenuItemUseCase).execute(restaurantUuid, menuItemUuid);
 
         mockMvc.perform(delete("/api/v1/restaurants/{restaurantUuid}/menu-items/{menuItemUuid}", restaurantUuid, menuItemUuid))
             .andExpect(status().isNoContent());

@@ -13,5 +13,7 @@ public interface RestaurantRepository extends JpaRepository<RestaurantEntity, Lo
 
 	boolean existsByUuid(UUID uuid);
 
+	void deleteByUuid(UUID uuid);
+
 }
 
